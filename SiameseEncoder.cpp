@@ -1,5 +1,5 @@
 /** \file
-    \brief Siamese FEC Implementation: Encoder
+    \brief Siamese Encoder Implementation
     \copyright Copyright (c) 2017 Christopher A. Taylor.  All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,9 @@
 */
 
 #include "SiameseEncoder.h"
-#include "SiameseSerializers.h"
+#include "SiameseTools.h"
 
 namespace siamese {
-
-#ifdef SIAMESE_ENCODER_DUMP_VERBOSE
-    static logger::Channel Logger("Encoder", logger::Level::Debug);
-#else
-    static logger::Channel Logger("Encoder", logger::Level::Silent);
-#endif
-
-
-//------------------------------------------------------------------------------
-// EncoderStats
-
-EncoderStats::EncoderStats()
-{
-    for (unsigned i = 0; i < SiameseEncoderStats_Count; ++i) {
-        Counts[i] = 0;
-    }
-}
 
 
 //------------------------------------------------------------------------------
@@ -55,748 +38,544 @@ EncoderStats::EncoderStats()
 
 EncoderPacketWindow::EncoderPacketWindow()
 {
-    NextColumn  = 0;
-    ColumnStart = 0;
-
+    TheAllocator = nullptr;
+    Stats = nullptr;
     ClearWindow();
 }
 
 void EncoderPacketWindow::ClearWindow()
 {
+    CountLock.Enter();
+    Count = 0;
+    CountLock.Leave();
+
+    // Reset for recovery packets
+    LongestPacket = 0;
+    ColumnStart = 0;
+    SumColumnStart = 0;
     FirstUnremovedElement = 0;
-    Count                 = 0;
-    LongestPacket         = 0;
-    SumStartElement       = 0;
-    SumEndElement         = 0;
-
-    for (unsigned laneIndex = 0; laneIndex < kColumnLaneCount; ++laneIndex)
-    {
-        EncoderColumnLane& lane = Lanes[laneIndex];
-
-        for (unsigned sumIndex = 0; sumIndex < kColumnSumCount; ++sumIndex)
-        {
-            lane.Sum[sumIndex].Bytes   = 0;
-            lane.NextElement[sumIndex] = laneIndex;
-        }
-        lane.LongestPacket = 0;
-    }
+    SumStartElement = 0;
+    SumEndElement = 0;
+    SumErasedCount = 0;
+    EmergencyDisabled = false;
 }
 
 SiameseResult EncoderPacketWindow::Add(SiameseOriginalPacket& packet)
 {
-    if (EmergencyDisabled) {
-        return Siamese_Disabled;
-    }
-
-    if (GetRemainingSlots() <= 0) {
-        // This is not invalid input - The application often does not have
-        // control over how much data it tries to send.  Instead it must
-        // listen for our feedback return code to decide when to slow down.
-        return Siamese_MaxPacketsReached;
-    }
-
-    const unsigned column         = NextColumn;
-    const unsigned subwindowCount = Subwindows.GetSize();
-    unsigned element              = Count;
-
-    // Assign packet number
-    packet.PacketNum = column;
-
-    // If there is not enough room for this new element:
-    // Note: Adding a buffer of kColumnLaneCount to create space ahead for
-    // snapshots as a subwindow is filled and we need to store its snapshot
-    if (element + kColumnLaneCount >= subwindowCount * kSubwindowSize)
+    if (packet.DataBytes < SIAMESE_MIN_PACKET_BYTES ||
+        packet.DataBytes > SIAMESE_MAX_PACKET_BYTES)
     {
-        EncoderSubwindow* subwindow = TheAllocator->Construct<EncoderSubwindow>();
-        if (!subwindow || !Subwindows.Append(subwindow))
+        return Siamese_BadInput;
+    }
+
+    // Initialize window if it is empty
+    if (Count == 0)
+    {
+        ColumnStart = packet.PacketNum;
+    }
+
+    // Check if window is full
+    const unsigned kMaxElements = SIAMESE_MAX_PACKETS;
+    if (Count >= kMaxElements)
+        return Siamese_MaxPacketsReached;
+
+    // Calculate element index for this packet
+    unsigned element = (packet.PacketNum - ColumnStart) & SIAMESE_PACKET_NUM_MASK;
+
+    // If packet does not fit in window
+    if (element >= kMaxElements)
+        return Siamese_MaxPacketsReached;
+
+    // If this is a retransmission or late arrival, ignore it
+    if (element < Count)
+    {
+        OriginalPacket* original = GetWindowElement(element);
+        if (original->Column == packet.PacketNum)
+            return Siamese_DuplicateData;
+    }
+    else if (element > Count)
+    {
+        // Element is being added ahead of window
+        while (Count < element)
         {
-            EmergencyDisabled = true;
-            Logger.Error("WindowAdd.Construct OOM");
-            SIAMESE_DEBUG_BREAK();
-            return Siamese_Disabled;
+            // Fill in intervening elements
+            OriginalPacket* original = GetWindowElement(Count);
+            original->Data = nullptr;
+            original->Column = (ColumnStart + Count) & SIAMESE_PACKET_NUM_MASK;
+            original->LengthBytes = 0;
+
+            if (!Stats->OnAddOriginal(this, true))
+                return Siamese_MaxPacketsReached;
+
+            ++Count;
         }
     }
 
-    if (Count > 0) {
+    // Fill in the window element
+    OriginalPacket* original = GetWindowElement(element);
+    original->Column = packet.PacketNum;
+    original->LengthBytes = packet.DataBytes;
+    if (LongestPacket < packet.DataBytes)
+        LongestPacket = packet.DataBytes;
+
+    original->Data = TheAllocator->Allocate(original->LengthBytes);
+    if (!original->Data)
+        return Siamese_OutOfMemory;
+
+    memcpy(original->Data, packet.Data, original->LengthBytes);
+
+    if (element >= Count)
+    {
+        if (!Stats->OnAddOriginal(this, false))
+            return Siamese_MaxPacketsReached;
+
         ++Count;
     }
-    else
-    {
-        // Start a new window:
-        element = column % kColumnLaneCount;
-        StartNewWindow(column);
-    }
 
-    // Initialize original packet with received data
-    OriginalPacket* original = GetWindowElement(element);
-    if (0 == original->Initialize(TheAllocator, packet))
-    {
-        EmergencyDisabled = true;
-        Logger.Error("WindowAdd.Initialize OOM");
-        SIAMESE_DEBUG_BREAK();
-        return Siamese_Disabled;
-    }
-    SIAMESE_DEBUG_ASSERT(original->Column % kColumnLaneCount == element % kColumnLaneCount);
-
-    // Attach original send time in milliseconds
-    *GetWindowElementTimestampPtr(element) = static_cast<uint32_t>(GetTimeMsec());
-
-    // Roll next column to assign
-    NextColumn = IncrementColumn1(NextColumn);
-
-    // Update longest packet
-    const unsigned originalBytes = original->Buffer.Bytes;
-    const unsigned laneIndex     = column % kColumnLaneCount;
-    EncoderColumnLane& lane      = Lanes[laneIndex];
-    if (lane.LongestPacket < originalBytes) {
-        lane.LongestPacket = originalBytes;
-    }
-    if (LongestPacket < originalBytes) {
-        LongestPacket = originalBytes;
-    }
-
-    Stats->Counts[SiameseEncoderStats_OriginalCount]++;
-    Stats->Counts[SiameseEncoderStats_OriginalBytes] += packet.DataBytes;
     return Siamese_Success;
 }
 
 void EncoderPacketWindow::StartNewWindow(unsigned column)
 {
-    // Maintain the invariant that element % 8 == column % 8 by skipping some
-    const unsigned element = column % kColumnLaneCount;
-    ColumnStart            = column - element;
-    SIAMESE_DEBUG_ASSERT(column >= element && ColumnStart < kColumnPeriod);
-    SumStartElement        = element;
-    SumEndElement          = element;
-    FirstUnremovedElement  = element;
-    Count                  = element + 1;
+    ColumnStart = column;
+    SumColumnStart = column;
 
-    // Reset longest packet
-    LongestPacket = 0;
-    for (unsigned laneIndex = 0; laneIndex < kColumnLaneCount; ++laneIndex) {
-        Lanes[laneIndex].LongestPacket = 0;
-    }
+    CountLock.Enter();
+    Count = 0;
+    CountLock.Leave();
 
-    Logger.Info(">>> Starting a new window from column ", ColumnStart);
+    FirstUnremovedElement = 0;
+    SumStartElement = 0;
+    SumEndElement = 0;
+    SumErasedCount = 0;
 }
 
 void EncoderPacketWindow::RemoveBefore(unsigned firstKeptColumn)
 {
-    if (EmergencyDisabled) {
-        return;
-    }
+    // Clip column to within the range of window columns
+    unsigned elementToRemoveBefore = 0;
+    if (firstKeptColumn > ColumnStart)
+        elementToRemoveBefore = SubtractColumns(firstKeptColumn, ColumnStart);
+    if (elementToRemoveBefore > Count)
+        elementToRemoveBefore = Count;
 
-    // Convert column to element, handling wrap-around:
-    const unsigned firstKeptElement = ColumnToElement(firstKeptColumn);
-
-    // If the column is outside of the window:
-    if (InvalidElement(firstKeptElement))
+    // Remove obsolete data
+    for (unsigned i = FirstUnremovedElement; i < elementToRemoveBefore; ++i)
     {
-        // If the element was before the window:
-        if (IsColumnDeltaNegative(firstKeptElement)) {
-            Logger.Info("Remove before column ", firstKeptColumn, " - Ignored before window");
-        }
-        else
-        {
-            // Removed everything
-            Count = 0;
+        OriginalPacket* original = GetWindowElement(i);
+        if (original->Data)
+            TheAllocator->Free(original->Data);
+        original->Data = nullptr;
 
-            Logger.Info("Remove before column ", firstKeptColumn, " - Removed everything");
-        }
+        Stats->OnRemoveOriginal();
     }
-    else
-    {
-        Logger.Info("Remove before column ", firstKeptColumn, " element ", firstKeptElement);
 
-        // Mark these elements for removal next time we generate output
-        if (FirstUnremovedElement < firstKeptElement) {
-            FirstUnremovedElement = firstKeptElement;
-        }
-    }
+    FirstUnremovedElement = elementToRemoveBefore;
 }
 
 void EncoderPacketWindow::ResetSums(unsigned elementStart)
 {
-    // Recreate all the sums from scratch after this:
-    for (unsigned laneIndex = 0; laneIndex < kColumnLaneCount; ++laneIndex)
-    {
-        // Calculate first element to accumulate for this lane
-        const unsigned nextElement = GetNextLaneElement(elementStart, laneIndex);
+    // Set start of summing range
+    SumStartElement = elementStart;
 
-        for (unsigned sumIndex = 0; sumIndex < kColumnSumCount; ++sumIndex)
+    // Reset SumColumnStart
+    SumColumnStart = (ColumnStart + SumStartElement) & SIAMESE_PACKET_NUM_MASK;
+
+    // Clear sum block(s)
+    for (unsigned i = 0; i < kColumnSumCount; ++i)
+    {
+        for (unsigned j = 0; j < kColumnSumCount; ++j)
         {
-            Lanes[laneIndex].NextElement[sumIndex] = nextElement;
-            Lanes[laneIndex].Sum[sumIndex].Bytes   = 0;
+            GrowingAlignedDataBuffer& sums = Sums[i][j];
+            sums.Resize(0);
         }
     }
 
-    SumStartElement = elementStart;
-    SumEndElement   = elementStart;
-    SumColumnStart  = ElementToColumn(elementStart);
-    SumErasedCount  = 0;
+    SumEndElement = SumStartElement;
+    SumErasedCount = 0;
 }
 
 void EncoderPacketWindow::RemoveElements()
 {
-    const unsigned firstKeptSubwindow  = FirstUnremovedElement / kSubwindowSize;
-    const unsigned removedElementCount = firstKeptSubwindow * kSubwindowSize;
-    SIAMESE_DEBUG_ASSERT(firstKeptSubwindow >= 1);
-    SIAMESE_DEBUG_ASSERT(firstKeptSubwindow < Subwindows.GetSize());
-    SIAMESE_DEBUG_ASSERT(removedElementCount % kColumnLaneCount == 0);
-    SIAMESE_DEBUG_ASSERT(removedElementCount <= FirstUnremovedElement);
-
-    Logger.Info("******** Removing up to ", FirstUnremovedElement, " and startColumn=", ColumnStart);
-
-    // If there are running sums:
-    if (SumEndElement > SumStartElement)
+    // Remove any elements that have been removed
+    if (FirstUnremovedElement > 0)
     {
-        // Roll up the sums past the removal point
-        for (unsigned laneIndex = 0; laneIndex < kColumnLaneCount; ++laneIndex)
-        {
-            for (unsigned sumIndex = 0; sumIndex < kColumnSumCount; ++sumIndex)
-            {
-                GetSum(laneIndex, sumIndex, removedElementCount);
-
-                SIAMESE_DEBUG_ASSERT(Lanes[laneIndex].NextElement[sumIndex] >= removedElementCount);
-                Lanes[laneIndex].NextElement[sumIndex] -= removedElementCount;
-            }
-        }
-
-        if (removedElementCount > SumStartElement) {
-            SumErasedCount += removedElementCount - SumStartElement;
-        }
-
-        if (SumEndElement > removedElementCount) {
-            SumEndElement -= removedElementCount;
-        }
-        else {
-            SumEndElement = 0;
-        }
-
-        if (SumStartElement > removedElementCount) {
-            SumStartElement -= removedElementCount;
-        }
-        else {
-            SumStartElement = 0;
-        }
-    }
-
-    // Shift kept subwindows to the front of the vector:
-
-    // Resize a temporary buffer for removed subwindows
-    if (!SubwindowsShift.SetSize_NoCopy(firstKeptSubwindow))
-    {
-        SIAMESE_DEBUG_BREAK(); // OOM
-        EmergencyDisabled = true;
-        return;
-    }
-
-    // Store removed subwindows temporarily
-    memcpy(
-        SubwindowsShift.GetPtr(0),
-        Subwindows.GetPtr(0),
-        firstKeptSubwindow * sizeof(EncoderSubwindow*)
-    );
-
-    const unsigned subwindowsShifted = Subwindows.GetSize() - firstKeptSubwindow;
-
-    // Shift subwindows to front that are being kept
-    memmove(
-        Subwindows.GetPtr(0),
-        Subwindows.GetPtr(firstKeptSubwindow),
-        subwindowsShifted * sizeof(EncoderSubwindow*)
-    );
-
-    // Removed subwindows are moved to the end (unordered) for later reuse
-    memcpy(
-        Subwindows.GetPtr(subwindowsShifted),
-        SubwindowsShift.GetPtr(0),
-        firstKeptSubwindow * sizeof(EncoderSubwindow*)
-    );
-
-    // Update the count of elements in the window
-    SIAMESE_DEBUG_ASSERT(Count >= removedElementCount);
-    Count -= removedElementCount;
-
-    // Roll up the ColumnStart member
-    ColumnStart = ElementToColumn(removedElementCount);
-    SIAMESE_DEBUG_ASSERT(ColumnStart == Subwindows.GetRef(0)->Originals[0].Column);
-
-    // Roll up the FirstUnremovedElement member
-    SIAMESE_DEBUG_ASSERT(FirstUnremovedElement % kSubwindowSize == FirstUnremovedElement - removedElementCount);
-    SIAMESE_DEBUG_ASSERT(FirstUnremovedElement >= removedElementCount);
-    FirstUnremovedElement -= removedElementCount;
-
-    // Determine the new longest packets
-    unsigned longestPacket = 0;
-    unsigned laneLongest[kColumnLaneCount] = { 0 };
-    for (unsigned i = FirstUnremovedElement, count = Count; i < count; ++i)
-    {
-        OriginalPacket* original     = GetWindowElement(i);
-        const unsigned originalBytes = original->Buffer.Bytes;
-        if (longestPacket < originalBytes) {
-            longestPacket = originalBytes;
-        }
-        SIAMESE_DEBUG_ASSERT(original->Column % kColumnLaneCount == i % kColumnLaneCount);
-        const unsigned laneIndex = i % kColumnLaneCount;
-        if (laneLongest[laneIndex] < originalBytes) {
-            laneLongest[laneIndex] = originalBytes;
-        }
-    }
-
-    // Update longest packet fields
-    LongestPacket = longestPacket;
-    for (unsigned laneIndex = 0; laneIndex < kColumnLaneCount; ++laneIndex) {
-        Lanes[laneIndex].LongestPacket = laneLongest[laneIndex];
-    }
-
-    // If there are no running sums:
-    if (SumEndElement <= SumStartElement) {
+        // Reset the summing range when packets are removed
         ResetSums(FirstUnremovedElement);
+
+        // Update count
+        CountLock.Enter();
+        Count -= FirstUnremovedElement;
+        CountLock.Leave();
+
+        // Update column start
+        ColumnStart = (ColumnStart + FirstUnremovedElement) & SIAMESE_PACKET_NUM_MASK;
+
+        // Slide window up to account for removed packets
+        for (unsigned i = 0; i < Count; ++i)
+        {
+            WindowElements[i] = WindowElements[i + FirstUnremovedElement];
+            ElementTimestamps[i] = ElementTimestamps[i + FirstUnremovedElement];
+        }
+
+        // Reset housekeeping for the window
+        FirstUnremovedElement = 0;
     }
 }
 
-const GrowingAlignedDataBuffer* EncoderPacketWindow::GetSum(unsigned laneIndex, unsigned sumIndex, unsigned elementEnd)
+const GrowingAlignedDataBuffer* EncoderPacketWindow::GetSum(
+    unsigned laneIndex,
+    unsigned sumIndex,
+    unsigned elementEnd)
 {
-    EncoderColumnLane& lane = Lanes[laneIndex];
-    unsigned element = lane.NextElement[sumIndex];
-    SIAMESE_DEBUG_ASSERT(element % kColumnLaneCount == laneIndex);
-    SIAMESE_DEBUG_ASSERT(element < Count + kColumnLaneCount);
+    // If sum range is empty:
+    if (SumEndElement >= elementEnd)
+        return &Sums[laneIndex][sumIndex];
 
-    if (element < elementEnd)
+    // If sum is for a lane that is unused or not added:
+    GrowingAlignedDataBuffer& sums = Sums[laneIndex][sumIndex];
+
+    // For each original packet that needs to be summed:
+    for (unsigned element = SumEndElement; element < elementEnd; ++element)
     {
-        GrowingAlignedDataBuffer& sum = lane.Sum[sumIndex];
+        OriginalPacket* original = GetWindowElement(element);
 
-        // Grow this sum for this lane to fit new (larger) data if needed
-        if (lane.LongestPacket > 0 &&
-            !sum.GrowZeroPadded(TheAllocator, lane.LongestPacket))
+        // If data is not available:
+        if (!original->Data || !original->LengthBytes)
         {
-            EmergencyDisabled = true;
-            goto ExitSum;
+            ++SumErasedCount;
+            continue;
         }
 
-        do
+        // If original packet is too small to contain a byte for this lane:
+        const unsigned laneByteIndex = laneIndex;
+        if (original->LengthBytes <= laneByteIndex)
+            continue;
+
+        // If this is the first packet in the summation range:
+        if (sums.GetSize() <= 0)
         {
-            Logger.Info("Lane ", laneIndex, " sum ", sumIndex, " accumulating column: ", ColumnStart + element);
+            // Allocate space for a sum
+            if (!sums.Append(original->Data, original->LengthBytes))
+                return nullptr;
+        }
+        else
+        {
+            const unsigned minBytes = (original->LengthBytes < sums.GetSize()) ?
+                original->LengthBytes : sums.GetSize();
 
-            OriginalPacket* original = GetWindowElement(element);
-            const unsigned column    = original->Column;
-            unsigned addBytes        = original->Buffer.Bytes;
-
-            if (!sum.GrowZeroPadded(TheAllocator, addBytes))
+            uint8_t coefficient;
+            if (sumIndex == 0)
+                coefficient = 1;
+            else
             {
-                EmergencyDisabled = true;
-                goto ExitSum;
+                // Sum 1 = Sum of encoded with original columns
+                // Column values are chosen so none of them are 0
+                coefficient = GetColumnValue(original->Column);
+
+                // Sum 2 = Sum of encoded with original columns ^ 2
+                // Sum 3 = Sum of encoded with original columns ^ 3
+                // ...
+                for (unsigned i = 1; i < sumIndex; ++i)
+                    coefficient = gf256_mul(coefficient, GetColumnValue(original->Column));
             }
 
-            SIAMESE_DEBUG_ASSERT(original->Buffer.Bytes <= sum.Bytes || element < FirstUnremovedElement);
-
-            // Sum += PacketData
-            if (sumIndex == 0) {
-                gf256_add_mem(sum.Data, original->Buffer.Data, addBytes);
+            // If lane is 0:
+            if (laneIndex == 0)
+            {
+                if (coefficient == 1)
+                {
+                    // Just XOR
+                    gf256_add_mem(sums.GetData(), original->Data, minBytes);
+                }
+                else
+                {
+                    // Muladd operation
+                    gf256_muladd_mem(sums.GetData(), coefficient, original->Data, minBytes);
+                }
             }
             else
             {
-                // Sum += CX[2] * PacketData
-                uint8_t CX = GetColumnValue(column);
-                if (sumIndex == 2) {
-                    CX = gf256_sqr(CX);
+                const unsigned sums_size = sums.GetSize();
+                uint8_t* dest_ptr = sums.GetData();
+                const uint8_t* src_ptr = original->Data;
+
+                if (coefficient == 1)
+                {
+                    // Just XOR
+                    for (unsigned i = laneByteIndex; i < minBytes; i += GF256_STRIDE)
+                        dest_ptr[i] ^= src_ptr[i];
                 }
-                gf256_muladd_mem(sum.Data, CX, original->Buffer.Data, addBytes);
+                else
+                {
+                    // Muladd operation
+                    for (unsigned i = laneByteIndex; i < minBytes; i += GF256_STRIDE)
+                        dest_ptr[i] ^= gf256_mul(coefficient, src_ptr[i]);
+                }
             }
-
-            SIAMESE_DEBUG_ASSERT(original->Column % kColumnLaneCount == laneIndex);
-            element += kColumnLaneCount;
-        } while (element < elementEnd);
-
-        // Store next element to accumulate
-        lane.NextElement[sumIndex] = element;
+        }
     }
 
-ExitSum:
-    return &lane.Sum[sumIndex];
+    return &sums;
 }
 
 
 //------------------------------------------------------------------------------
 // EncoderAcknowledgementState
 
-/**
-    Siamese Retransmission Timeout (RTO) calculation
-
-    TL;DR:  RTO = Max(RTT) * 1.5
-
-
-    Why calculate RTO?
-
-    There are three times when retransmission timeouts must be decided:
-    (1) When the receiver receives a datagram out of order.
-    (2) When the sender does not get any acknowledgement back for a datagram.
-    (3) When the sender retransmits a datagram due to (1) or (2) and does not
-    get any acknowledgement back for that datagram.
-
-    For case (1) the receiver has full data on reorder variance and can improve
-    on the RTO for sequence number holes that it notices.  Sending a NACK right
-    away once a hole is noticed might enable the sender to retransmit faster.
-
-    For case (2) and (3) the encoder must decide what the RTO should be without
-    any feedback from the decoder except prior acknowledgements.  These are the
-    cases where Siamese must determine the appropriate RTO.
-
-
-    How does Siamese calculate RTO?
-
-    The RTO is used to decide when to retransmit data if no acknowledgements
-    have been received, so we need to estimate the maximum time it takes to get
-    back an acknowledgement for sent data.
-
-    The delay between when siamese_encoder_add() indicates a packet was sent
-    and when siamese_encoder_ack() indicates that packet was received is the
-    data available in Encoder::Acknowledge().  This delay is called the Round-
-    Trip Time (RTT).
-
-    The Siamese encoder sends (a) original data, (b) FEC recovery packets, and
-    (c) retransmissions of original data, each of which can cause the Siamese
-    decoder to acknowledge the receipt of the data.  In the acknowledgement
-    timing data, the RTT for (a) is mixed in with the RTTs in cases (b)
-    and (c) and there is no way to tell those cases apart.
-
-    Fortunately, the maximum RTT in each set acknowledged data is a good
-    guide for the RTO value.  For case (a) it helps put an upper bound on
-    the time it takes to acknowledge original data.  For case (b) the delay
-    values will be unexpectedly small so will be mostly eliminated from the
-    data.  For case (c) the delay will either be useful or too small if the
-    RTO was too small and the original was just taking too long to arrive.
-
-    The only remaining issue is if any set of acknowledged data is entirely
-    made up of values that are too small.  To resolve that problem, a
-    windowed maximum is updated over time.
-
-    An advantage of basing the RTO on the maximum RTT is that it can react
-    to the leading edge of increasing delays due to cross-traffic, self-
-    congestion, and other network changes.  As soon as the delays start
-    increasing, the maximum value will be updated immediately.
-
-    The RTO is chosen to be 50% higher than the largest RTT seen lately,
-    avoiding unnecessary retransmissions when the delay starts to increase.
-    This rough value may overestimate the proper RTO, but it does not need
-    to be particularly accurate (see below).
-
-
-    What other approaches exist?
-
-    For ARQ schemes that need to estimate RTT in addition to RTO, it is more
-    important to sort cases (a) from (b) and (c).  Google's QUIC assigns
-    each packet a different nonce instead of reusing the same reliable packet
-    sequence number, enabling it to differentiate these cases.  For Siamese,
-    only RTO is needed so that would be overkill.
-
-
-    Does RTO need to be very accurate?  No.
-
-    For delay-sensitive flows, FEC recovery is clearly preferred over any of
-    these options.  By the time RTT * 2 has elapsed, a few recovery packets
-    must have been received, and it is likely that the missing data is
-    already recovered.  Basically in case (3) FEC does almost all the heavy
-    lifting already, and a larger RTO should be used.  And even in case (2) it
-    can play a large role in reducing delay.
-
-    With careful estimation on the receiver side, a NACK can be sent sooner for
-    reordered data to cut the overall retransmission time to RTT * 1.5 at best.
-    This would require a lot more complexity at the receiver and it would also
-    provide no practical benefit over recovering with FEC.
-
-    For high-speed flows, FEC recovery is not desireable because there is no
-    delay requirement on the data.  So instead a long RTO can be selected to
-    safely avoid retransmitting data unnecessarily, optimizing for bandwidth.
-*/
-
 bool EncoderAcknowledgementState::OnAcknowledgementData(const uint8_t* data, unsigned bytes)
 {
-    unsigned nextColumnExpected = 0;
-    int headerBytes = DeserializeHeader_PacketNum(data, bytes, nextColumnExpected);
-    if (headerBytes < 1) {
-        SIAMESE_DEBUG_BREAK(); // Invalid input
-        return false;
-    }
-    data += headerBytes, bytes -= headerBytes;
+    const unsigned minBytes = SIAMESE_ACK_MIN_BYTES;
 
-    // If we received ack data out of order:
-    unsigned columnDelta = SubtractColumns(nextColumnExpected, NextColumnExpected);
-    if (IsColumnDeltaNegative(columnDelta)) {
-        // Ignore any older data since it would lose information.
-        return true;
-    }
+    // Check input args
+    if (!data || bytes < minBytes)
+        return false;
 
     /*
-        Ignore duplicate data.
+        Buffer format:
 
-        Note if we get the same packet number twice and the data bytes changed
-        we will accept the new data.  This means that if datagrams are received
-        out of order, the old one might win.
+        The message contains a list of ranges of columns that were received,
+        followed by a list of columns that were lost, sorted by sequence number.
 
-        This can be avoided by including the latest acknowledged datagram nonce
-        at the protocol level with each acknowledgement.  Then assuming that
-        data is being received regularly it will allow a quick reject for old
-        acknowledgement data.
+        [0...] 32-bit Next Column Expected: First column to send next
+        [4...] 8-bit Range Count (M): Number of ranges to acknowledge
+        [5...] 32-bit (Range Start 0) first range column start
+        [9...] 32-bit (Range End 0) first range column end - Exclusive
+        ...
+        [5 + 8*(M-1)...] 32-bit (Range Start M-1) last range column start
+        [9 + 8*(M-1)...] 32-bit (Range End M-1) last range column end - Exclusive
+        [5 + 8*M...] List of 32-bit lost columns, sorted
     */
-    if (NextColumnExpected == nextColumnExpected &&
-        Data && bytes == DataBytes &&
-        0 == memcmp(data, Data, bytes))
+
+    // Get next column expected
+    uint32_t nextColumnExpected_32;
+    memcpy(&nextColumnExpected_32, data, sizeof(nextColumnExpected_32));
+    UInt32_ByteSwap(nextColumnExpected_32);
+    NextColumnExpected = nextColumnExpected_32 & SIAMESE_PACKET_NUM_MASK;
+
+    // Get range count
+    const unsigned rangeCount = data[4];
+    if (rangeCount > kMaxRangeCount)
+        return false;
+
+    // Get offset of first loss
+    unsigned offset = 5 + 8 * rangeCount;
+    if (offset > bytes)
+        return false;
+
+    // Copy range data
+    AckRangeCount = rangeCount;
+    for (unsigned i = 0; i < rangeCount; ++i)
     {
-        return true;
+        AckRangeStart[i] = NextColumnExpected;
+        AckRangeEnd[i] = NextColumnExpected;
+
+        uint32_t rangeStart_32, rangeEnd_32;
+        const unsigned startOffset = 5 + 8 * i;
+        memcpy(&rangeStart_32, data + startOffset, sizeof(rangeStart_32));
+        UInt32_ByteSwap(rangeStart_32);
+        memcpy(&rangeEnd_32, data + startOffset + 4, sizeof(rangeEnd_32));
+        UInt32_ByteSwap(rangeEnd_32);
+
+        AckRangeStart[i] = rangeStart_32 & SIAMESE_PACKET_NUM_MASK;
+        AckRangeEnd[i] = rangeEnd_32 & SIAMESE_PACKET_NUM_MASK;
     }
 
-    // Update next expected column
-    NextColumnExpected = nextColumnExpected;
-
-    // Reset message decoder state
-    Offset     = 0;
-    LossColumn = NextColumnExpected;
-    LossCount  = 0;
-    DataBytes  = bytes;
-
-    // If there are NACK ranges:
-    if (bytes > 0)
+    // Copy negative acknowledgement data
+    NackCount = 0;
+    for (unsigned i = 0; offset + i * 4 + 4 <= bytes && i < kMaxNackCount; ++i)
     {
-        // Copy the new data into place with some padding at the end
-        Data = TheAllocator->Reallocate(Data, bytes + kPaddingBytes,
-            pktalloc::Realloc::Uninitialized);
-        memcpy(Data, data, bytes);
-        memset(Data + bytes, 0, kPaddingBytes); // Zero guard bytes
+        uint32_t loss_32;
+        memcpy(&loss_32, data + offset + i * 4, sizeof(loss_32));
+        UInt32_ByteSwap(loss_32);
 
-        // Returns false if decoding the first loss range fails
-        if (!DecodeNextRange()) {
-            return false;
-        }
-        SIAMESE_DEBUG_ASSERT(IsIteratorAtFront()); // Invalid data
+        NackColumns[NackCount++] = loss_32 & SIAMESE_PACKET_NUM_MASK;
     }
 
-    // Update RTO estimation based on the latest loss ranges and rollup
+    // Restart the loss iterator
+    LossIndex = 0;
+    LossRangeIndex = 0;
+    NeedToRetransmitOldest = false;
+    FoundOldest = false;
+
     UpdateRTO();
-
-    // Remove data the given column
-    TheWindow->RemoveBefore(NextColumnExpected);
 
     return true;
 }
 
 void EncoderAcknowledgementState::UpdateRTO()
 {
-    const unsigned windowCount = TheWindow->Count;
+    const unsigned windowStart = TheWindow->ColumnStart;
 
-    // If there is no unacknowledged data:
-    unsigned firstLoss = TheWindow->ColumnToElement(NextColumnExpected);
-    if (firstLoss >= windowCount) {
-        return;
-    }
+    EncoderTimestampRecord* timestamps = TheWindow->ElementTimestamps;
+    const unsigned count = TheWindow->Count;
 
-    // Get current time
-    const uint64_t nowMsec64 = GetTimeMsec();
-    const uint32_t nowMsec = static_cast<uint32_t>(nowMsec64);
-    unsigned longestAckDelayMsec = 0;
+    SmoothedRTT = 0;
+    RetransmitTimeoutMsec = kMinRTO;
 
-    // Locate first unacknowledged element
-    unsigned element = TheWindow->ColumnToElement(NextRTOColumn);
-    if (element >= windowCount)
+    unsigned receivedCount = 0;
+    uint64_t nowMsec = GetTimeMsec();
+    const unsigned maxChecks = (count > kMaxRTOSamples) ? kMaxRTOSamples : count;
+
+    for (unsigned i = 0; i < maxChecks; ++i)
     {
-        Logger.Warning("NextRTOColumn was invalid, so rolling up to FirstUnremovedElement = ", TheWindow->FirstUnremovedElement);
-        element = TheWindow->FirstUnremovedElement;
-    }
+        const unsigned element = TheWindow->FirstUnremovedElement + i;
 
-    // First walk through all the rollups:
-    for (; element < firstLoss; ++element)
-    {
-        // Get last time this was sent (maybe the second time)
-        const uint32_t* sendMsecPtr = TheWindow->GetWindowElementTimestampPtr(element);
-        SIAMESE_DEBUG_ASSERT(*sendMsecPtr != 0);
+        // Stop after looking at most recent 1/4 of the window
+        if (element >= count || element >= TheWindow->FirstUnremovedElement + (count / 4))
+            break;
 
-        // Calculate delay since it was sent
-        const int32_t delayMsec = nowMsec - *sendMsecPtr;
-        if ((unsigned)delayMsec > longestAckDelayMsec && delayMsec > 0)
+        // Get original column number
+        OriginalPacket* original = TheWindow->GetWindowElement(element);
+        const unsigned column = original->Column;
+
+        // If the packet had never been sent:
+        uint32_t& sendTimeMsec = *TheWindow->GetWindowElementTimestampPtr(element);
+        if (sendTimeMsec == 0)
+            continue;
+
+        // Check if packet was already acknowledged
+        if (IsAcknowledged(column))
         {
-            longestAckDelayMsec = delayMsec;
+            // Get elapsed time since it was sent
+            uint32_t deltaMsec = GetTimePastMsec(sendTimeMsec);
 
-            Logger.Info("ACKED TS = ", *sendMsecPtr, " for ID=", element + TheWindow->ColumnStart, " <- new max delay: ", delayMsec);
-        }
-        else
-        {
-            Logger.Info("acked ts = ", *sendMsecPtr, " for ID=", element + TheWindow->ColumnStart, " - not max delay - ", delayMsec);
-        }
-    }
-
-    // Scan the selective acknowledgements implied by the NACK ranges:
-    unsigned remaining = DataBytes;
-    const uint8_t* data = Data;
-    while (remaining > 0)
-    {
-        // Decode NACK loss range
-        unsigned relativeStart, lossCountM1;
-        const int lossRangeBytes = DeserializeHeader_NACKLossRange(
-            data, remaining + kPaddingBytes, relativeStart, lossCountM1);
-
-        if (lossRangeBytes < 0 ||
-            lossRangeBytes > (int)remaining)
-        {
-            SIAMESE_DEBUG_BREAK(); // Invalid input
-            return;
-        }
-        data += lossRangeBytes, remaining -= lossRangeBytes;
-
-        // If element has not rolled up to the first acknowledged packet:
-        if (element + 1 < firstLoss) {
-            element = firstLoss - 1; // Roll it up
-        }
-
-        // Calculat the first loss in this NACK range
-        firstLoss += relativeStart;
-
-        // Note that element may already be beyond this NACK range because we
-        // may have seen this NACK range in a prior Acknowledgement message.
-        // For each element up to the first loss:
-        for (; element < firstLoss; ++element)
-        {
-            if (element >= windowCount) {
-                SIAMESE_DEBUG_BREAK(); // Invalid input
-                return;
-            }
-
-            // Get last time this was sent (maybe the second time)
-            const uint32_t* sendMsecPtr = TheWindow->GetWindowElementTimestampPtr(element);
-            SIAMESE_DEBUG_ASSERT(*sendMsecPtr != 0);
-
-            // Calculate delay since it was sent
-            const int32_t delayMsec = nowMsec - *sendMsecPtr;
-            if ((unsigned)delayMsec > longestAckDelayMsec && delayMsec > 0)
+            // If we have a realistic value:
+            if (deltaMsec > 5 && deltaMsec < 3600000) // Between 5 msec and 1 hour
             {
-                longestAckDelayMsec = delayMsec;
+                receivedCount++;
 
-                Logger.Info("NACKED TS = ", *sendMsecPtr, " for ID=", element + TheWindow->ColumnStart, " <- new max delay: ", delayMsec);
+                // EWMA estimation of RTT
+                if (SmoothedRTT == 0)
+                    SmoothedRTT = deltaMsec;
+                else
+                {
+                    SmoothedRTT = (SmoothedRTT * 3 + deltaMsec) / 4;
+                    if (SmoothedRTT < 1)
+                        SmoothedRTT = 1;
+                }
             }
-            else
+
+            // Reset timer since the packet was acknowledged
+            sendTimeMsec = 0;
+        }
+        else if (IsAcknowledgementLost(column))
+        {
+            // Get elapsed time since it was sent
+            uint32_t deltaMsec = GetTimePastMsec(sendTimeMsec);
+
+            // If elapsed time > 100 ms, check if we need to retransmit
+            if (deltaMsec >= 100)
             {
-                Logger.Info("nacked ts = ", *sendMsecPtr, " for ID=", element + TheWindow->ColumnStart, " - not max delay - ", delayMsec);
+                NeedToRetransmitOldest = true;
+
+                // If this is the first pending packet:
+                if (!FoundOldest)
+                {
+                    FoundOldest = true;
+                    OldestColumn = column;
+                }
             }
         }
-
-        // Update loss offset to keep in sync with NACK range encoder
-        firstLoss += lossCountM1 + 2;
     }
 
-    // Update next expected column for RTT calculation
-    NextRTOColumn = TheWindow->ElementToColumn(element);
+    if (SmoothedRTT > 0)
+        RetransmitTimeoutMsec = SmoothedRTT * 3 / 2;
 
-    // If there was no delay measurement:
-    if (longestAckDelayMsec <= 0) {
-        return;
+    if (RetransmitTimeoutMsec < kMinRTO)
+        RetransmitTimeoutMsec = kMinRTO;
+    else if (RetransmitTimeoutMsec > kMaxRTO)
+        RetransmitTimeoutMsec = kMaxRTO;
+}
+
+bool EncoderAcknowledgementState::IsAcknowledged(unsigned column)
+{
+    for (unsigned i = 0; i < AckRangeCount; ++i)
+    {
+        if (ColumnIsInRange(AckRangeStart[i], AckRangeEnd[i], column))
+            return true;
     }
 
-    // Recalculate the window size based on current timeout
-    static const uint64_t kMaxWindowMsec = 4000;
-    static const uint64_t kMinWindowMsec = 100;
-    uint64_t windowMsec = RetransmitTimeoutMsec * 2;
+    return false;
+}
 
-    if (windowMsec < kMinWindowMsec) {
-        windowMsec = kMinWindowMsec;
-    }
-    else if (windowMsec > kMaxWindowMsec) {
-        windowMsec = kMaxWindowMsec;
-    }
+bool EncoderAcknowledgementState::IsAcknowledgementLost(unsigned column)
+{
+    // Skip columns that have not been acknowledged yet and are
+    // after the next packet expected by the decoder
+    if (!ColumnInRange(column, NextColumnExpected))
+        return false;
 
-    // Update estimate of maximum RTT
-    MaxWindowedRTT.Update(
-        longestAckDelayMsec,
-        nowMsec64,
-        windowMsec);
-    const unsigned RTT_max = MaxWindowedRTT.GetBest();
-
-    // Pick an RTO that is 50% higher than the windowed maximum
-    RetransmitTimeoutMsec = (RTT_max * 3) / 2;
-
-    // Do not allow the RTO to get so small that OS scheduling delays might cause timeouts.
-    static const unsigned kMinimumRTOMsec = 20;
-    if (RetransmitTimeoutMsec < kMinimumRTOMsec) {
-        RetransmitTimeoutMsec = kMinimumRTOMsec;
+    for (unsigned i = 0; i < NackCount; ++i)
+    {
+        if (column == NackColumns[i])
+            return true;
     }
 
-    Logger.Info("Calculated windowMsec = ", windowMsec, " and RTT_max = ", RTT_max, " and RetransmitTimeoutMsec = ", RetransmitTimeoutMsec, " from longestAckDelayMsec = ", longestAckDelayMsec, " NextRTOColumn=", NextRTOColumn);
+    return !IsAcknowledged(column);
+}
+
+bool EncoderAcknowledgementState::HasNegativeAcknowledgements()
+{
+    return (NackCount > 0);
 }
 
 bool EncoderAcknowledgementState::DecodeNextRange()
 {
-    // If there is no more loss range data to process:
-    if (Offset >= DataBytes) {
+    // If we have been through them all:
+    if (LossRangeIndex >= AckRangeCount)
         return false;
+
+    const unsigned windowStart = TheWindow->ColumnStart;
+    const unsigned windowEnd = (windowStart + TheWindow->Count) & SIAMESE_PACKET_NUM_MASK;
+
+    // Find the range that contains windowEnd
+    unsigned foundIndex = AckRangeCount;
+    for (unsigned i = 0; i < AckRangeCount; ++i)
+    {
+        if (ColumnIsInRange(AckRangeStart[i], AckRangeEnd[i], windowEnd))
+        {
+            foundIndex = i;
+            break;
+        }
     }
 
-    // Decode loss range format:
-
-    SIAMESE_DEBUG_ASSERT(Data && DataBytes >= 1);
-
-    unsigned relativeStart, lossCountM1;
-    const int lossRangeBytes = DeserializeHeader_NACKLossRange(
-        Data + Offset, DataBytes + kPaddingBytes - Offset, relativeStart, lossCountM1);
-    if (lossRangeBytes < 0) {
+    // If no range start contains windowEnd:
+    if (foundIndex >= AckRangeCount)
         return false;
-    }
 
-    Offset += lossRangeBytes;
-    if (Offset > DataBytes) {
-        SIAMESE_DEBUG_BREAK(); // Invalid input
-        // TBD: Disable codec here?
-        return false;
-    }
-
-    // Move ahead the loss column
-    LossColumn = AddColumns(LossColumn, relativeStart);
-    LossCount  = lossCountM1 + 1;
-
+    // Smallest range end defines the current segment to walk through
+    LossRangeIndex = foundIndex;
     return true;
 }
 
 bool EncoderAcknowledgementState::GetNextLossColumn(unsigned& columnOut)
 {
-    if (LossCount <= 0)
+    if (LossIndex < NackCount)
     {
-        // Note: LossColumn is used as the offset for the next loss range, so
-        // we should increment it to one beyond the end of the current region
-        // when we get to the end of the region.
-        LossColumn = IncrementColumn1(LossColumn);
-
-        if (!DecodeNextRange()) {
-            return false;
-        }
+        columnOut = NackColumns[LossIndex++];
+        return true;
     }
-
-    columnOut = LossColumn;
-
-    LossColumn = IncrementColumn1(LossColumn);
-    --LossCount;
-
-    return true;
+    
+    return false;
 }
 
 void EncoderAcknowledgementState::RestartLossIterator()
 {
-    // Reset message decoder state
-    Offset     = 0;
-    LossColumn = NextColumnExpected;
-    LossCount  = 0;
-
-    DecodeNextRange();
-    // Note: Ignore return value
+    LossIndex = 0;
+    LossRangeIndex = 0;
 }
 
 void EncoderAcknowledgementState::Clear()
 {
-    // Reset message decoder state
-    Offset     = 0;
-    LossColumn = 0;
-    LossCount  = 0;
-    DataBytes  = 0;
-
-    // Reset the oldest column
+    AckRangeCount = 0;
+    NackCount = 0;
+    LossIndex = 0;
+    LossRangeIndex = 0;
     FoundOldest = false;
+    NextColumnExpected = 0;
+    SmoothedRTT = 0;
+    RetransmitTimeoutMsec = kMinRTO;
 }
 
 
@@ -821,640 +600,307 @@ SiameseResult Encoder::Acknowledge(
     }
 
     if (!Ack.OnAcknowledgementData(data, bytes)) {
-        return Siamese_InvalidInput;
+        return Siamese_BadInput;
     }
 
-    // Report the next expected packet number
     nextExpectedPacketNumOut = Ack.NextColumnExpected;
-
-    Stats.Counts[SiameseEncoderStats_AckCount]++;
-    Stats.Counts[SiameseEncoderStats_AckBytes] += bytes;
     return Siamese_Success;
 }
 
-static unsigned LoadOriginal(OriginalPacket* original, SiameseOriginalPacket& originalOut)
-{
-    const unsigned headerBytes = original->HeaderBytes;
-    SIAMESE_DEBUG_ASSERT(headerBytes > 0 && original->Buffer.Bytes > headerBytes);
-    const unsigned length = original->Buffer.Bytes - headerBytes;
-
-#ifdef SIAMESE_DEBUG
-    // Check: Deserialize length from the front
-    unsigned lengthCheck;
-    int headerBytesCheck = DeserializeHeader_PacketLength(original->Buffer.Data, original->Buffer.Bytes, lengthCheck);
-
-    if (lengthCheck != length || (int)headerBytes != headerBytesCheck ||
-        headerBytesCheck < 1 || lengthCheck == 0 ||
-        lengthCheck + headerBytesCheck != original->Buffer.Bytes)
-    {
-        SIAMESE_DEBUG_BREAK(); // Invalid input
-        return 0;
-    }
-#endif // SIAMESE_DEBUG
-
-    originalOut.PacketNum = original->Column;
-    originalOut.Data = original->Buffer.Data + headerBytes;
-    originalOut.DataBytes = length;
-    return length;
-}
-
 SiameseResult Encoder::AttemptRetransmit(
-    OriginalPacket* original,
+    OriginalPacket* originalRetransmit,
     SiameseOriginalPacket& originalOut)
 {
-    // Load original data and length
-    const unsigned length = LoadOriginal(original, originalOut);
-    if (length == 0) {
+    if (!originalRetransmit) {
+        return Siamese_InvalidInput;
+    }
+
+    if (originalRetransmit->LengthBytes > SIAMESE_MAX_PACKET_BYTES) {
+        // Failed sanity check
+        Logger.Error("AttemptRetransmit failed: Original length=", originalRetransmit->LengthBytes, " cannot exceed limit=", SIAMESE_MAX_PACKET_BYTES);
         Window.EmergencyDisabled = true;
         return Siamese_Disabled;
     }
 
-    Stats.Counts[SiameseEncoderStats_RetransmitCount]++;
-    Stats.Counts[SiameseEncoderStats_RetransmitBytes] += length;
+    originalOut.PacketNum = originalRetransmit->Column;
+    originalOut.DataBytes = originalRetransmit->LengthBytes;
+    originalOut.Data = originalRetransmit->Data;
+
     return Siamese_Success;
 }
 
 SiameseResult Encoder::Retransmit(SiameseOriginalPacket& originalOut)
 {
-    originalOut.Data = nullptr;
-    originalOut.DataBytes = 0;
-
     if (Window.EmergencyDisabled) {
         return Siamese_Disabled;
     }
 
-    // If there is no unacknowledged data:
+    // If there is nothing unacknowledged:
     if (Window.GetUnacknowledgedCount() <= 0)
     {
         Ack.FoundOldest = false; // Reset Ack state
-        return Siamese_NeedMoreData;
+        return Siamese_NothingToRetransmit;
     }
 
-    // Get the window element first the first column expected by the receiver
+    // Calculate first window element
     const unsigned firstElement = SubtractColumns(Ack.NextColumnExpected, Window.ColumnStart);
     const unsigned count = Window.Count;
 
-    // If the peer's next expected column is outside the window:
-    if (IsColumnDeltaNegative(firstElement) ||
+    // Respect decoder min retransmit interval
+    // Which is based on how much is pending ack from the other side
+    if (firstElement >= count ||
         firstElement < Window.FirstUnremovedElement ||
-        firstElement >= count)
+        count <= Window.FirstUnremovedElement)
     {
-        return Siamese_NeedMoreData;
+        Ack.FoundOldest = false;
+        return Siamese_NothingToRetransmit;
     }
 
-    const uint32_t nowMsec = static_cast<uint32_t>(siamese::GetTimeMsec());
     const uint32_t retransmitMsec = Ack.RetransmitTimeoutMsec;
 
-    // If the oldest column is already found:
+    // If we have a good idea of which packet to retransmit:
     if (Ack.FoundOldest)
     {
-        // Calculate the oldest element
         const unsigned element = SubtractColumns(Ack.OldestColumn, Window.ColumnStart);
 
-        // If the oldest element is still within the window:
-        if (!IsColumnDeltaNegative(element) &&
-            element >= firstElement &&
-            element < count)
+        if (element >= count ||
+            element < Window.FirstUnremovedElement)
+        {
+            Ack.FoundOldest = false;
+        }
+        else
         {
             OriginalPacket* original = Window.GetWindowElement(element);
-            SIAMESE_DEBUG_ASSERT(original->Buffer.Data != nullptr);
-            SIAMESE_DEBUG_ASSERT(original->Buffer.Bytes > 0);
-            uint32_t* lastSendMsecPtr = Window.GetWindowElementTimestampPtr(element);
-            const uint32_t lastSendMsec = *lastSendMsecPtr;
-            SIAMESE_DEBUG_ASSERT(lastSendMsec != 0);
 
-            // If RTO has not elapsed for the oldest entry:
-            if ((uint32_t)(nowMsec - lastSendMsec) < retransmitMsec) {
-                // Keep FoundOldest true for next time and stop for now
-                return Siamese_NeedMoreData;
+            // If there are no packets to retransmit or if the packet is already acknowledged
+            if (!original->Data ||
+                Ack.IsAcknowledged(original->Column))
+            {
+                Ack.FoundOldest = false;
             }
+            else
+            {
+                uint32_t* lastSendMsecPtr = Window.GetWindowElementTimestampPtr(element);
+                uint32_t elapsedMsec = GetTimePastMsec(*lastSendMsecPtr);
 
-            // Update last send time
-            *lastSendMsecPtr = nowMsec;
+                // If we have not already retransmitted this recently:
+                if (elapsedMsec >= retransmitMsec)
+                {
+                    *lastSendMsecPtr = GetTimeMsec();
 
-            // Look again for the oldest column next time
-            Ack.FoundOldest = false;
-
-            Logger.Debug("Retransmitting oldest in window. RTO = ", retransmitMsec, ", ID=", original->Column);
-
-            return AttemptRetransmit(original, originalOut);
+                    // Retransmit oldest unacknowledged packet
+                    return AttemptRetransmit(original, originalOut);
+                }
+            }
         }
 
-        // Keep searching for the oldest column
         Ack.FoundOldest = false;
     }
 
-    // Find the first column ready to go, or the oldest column in the set:
-
-    // If the first one is already ready to go:
-    unsigned nackElement = firstElement;
-    OriginalPacket* oldestOriginal = Window.GetWindowElement(nackElement);
-    uint32_t* firstSendMsecPtr = Window.GetWindowElementTimestampPtr(nackElement);
-    uint32_t oldestSendMsec = *firstSendMsecPtr;
-
-    // If the first packet RTO expired:
-    if ((uint32_t)(nowMsec - oldestSendMsec) >= retransmitMsec)
-    {
-        // Update last send time
-        *firstSendMsecPtr = nowMsec;
-
-        Logger.Debug("Retransmitting first in window. RTO = ", retransmitMsec, ", ID=", oldestOriginal->Column);
-
-        return AttemptRetransmit(oldestOriginal, originalOut);
-    }
-
-    // If NACK list is available:
+    // (2) If we know some packet data was lost, use the NACK list
     if (Ack.HasNegativeAcknowledgements())
     {
-        // Restart loss iterator for next time
-        Ack.RestartLossIterator();
-
-        // While there is another NACK column to process:
         unsigned column;
+        
+        Ack.RestartLossIterator();
+        
         while (Ack.GetNextLossColumn(column))
         {
-            // If the receiver has already seen all the packets we sent:
-            nackElement = Window.ColumnToElement(column);
-            if (nackElement >= count) {
-                break; // Stop here
-            }
-
-            // Lookup original packet and send time
-            OriginalPacket* original = Window.GetWindowElement(nackElement);
-            SIAMESE_DEBUG_ASSERT(original->Buffer.Data != nullptr);
-            SIAMESE_DEBUG_ASSERT(original->Buffer.Bytes > 0);
-            uint32_t* lastSendMsecPtr = Window.GetWindowElementTimestampPtr(nackElement);
-            const uint32_t lastSendMsec = *lastSendMsecPtr;
-            SIAMESE_DEBUG_ASSERT(lastSendMsec != 0);
-
-            // If RTO expired:
-            if ((uint32_t)(nowMsec - lastSendMsec) >= retransmitMsec)
+            unsigned nackElement = Window.ColumnToElement(column);
+            
+            // If the packet column is not in the window:
+            if (nackElement >= count ||
+                nackElement < Window.FirstUnremovedElement ||
+                !ColumnInRange(column, Window.ColumnStart))
             {
-                // Update last send time
-                *lastSendMsecPtr = nowMsec;
-
-                Logger.Debug("Retransmitting NACK: RTO = ", retransmitMsec, ", ID=", original->Column);
-
+                continue;
+            }
+            
+            // Get packet data
+            OriginalPacket* original = Window.GetWindowElement(nackElement);
+            uint32_t* lastSendMsecPtr = Window.GetWindowElementTimestampPtr(nackElement);
+            uint32_t elapsedMsec = GetTimePastMsec(*lastSendMsecPtr);
+            
+            // If packet data is now missing:
+            if (!original->Data)
+                continue;
+            
+            // If we have not already retransmitted this recently:
+            if (elapsedMsec >= retransmitMsec)
+            {
+                // Record time of retransmit
+                *lastSendMsecPtr = GetTimeMsec();
+                
+                // Retransmit selected unacknowledged packet
                 return AttemptRetransmit(original, originalOut);
             }
-
-            // If this is the oldest send time so far:
-            if ((int32_t)(oldestSendMsec - lastSendMsec) > 0)
-            {
-                oldestOriginal = original;
-                oldestSendMsec = lastSendMsec;
-            }
         }
     }
 
-    // For each remaining unacknowledged element (in flight) in the window:
-    for (unsigned element = nackElement + 1; element < count; ++element)
+    // (3) Just scan for something to retransmit
+    for (unsigned element = firstElement,
+         elementEnd = (firstElement + kLookBehind > count) ? count : (firstElement + kLookBehind);
+         element < elementEnd; ++element)
     {
-        // If the element needs to be retransmitted:
         OriginalPacket* original = Window.GetWindowElement(element);
-        SIAMESE_DEBUG_ASSERT(original->Buffer.Data != nullptr);
-        SIAMESE_DEBUG_ASSERT(original->Buffer.Bytes > 0);
         uint32_t* lastSendMsecPtr = Window.GetWindowElementTimestampPtr(element);
-        const uint32_t lastSendMsec = *lastSendMsecPtr;
-        SIAMESE_DEBUG_ASSERT(lastSendMsec != 0);
+        uint32_t elapsedMsec = GetTimePastMsec(*lastSendMsecPtr);
 
-        // If RTO has expired:
-        if ((uint32_t)(nowMsec - lastSendMsec) >= retransmitMsec)
+        if (!original->Data ||
+            Ack.IsAcknowledged(original->Column))
         {
-            // Update last send time
-            *lastSendMsecPtr = nowMsec;
+            continue;
+        }
 
-            Logger.Debug("Retransmitting post-NACK: RTO = ", retransmitMsec, ", ID=", original->Column);
+        // If we have not already retransmitted this recently:
+        if (elapsedMsec >= retransmitMsec)
+        {
+            *lastSendMsecPtr = GetTimeMsec();
 
+            // Record for faster selection next time
+            Ack.FoundOldest  = true;
+            Ack.OldestColumn = original->Column;
+
+            // Retransmit packet
             return AttemptRetransmit(original, originalOut);
         }
-
-        // If this is the oldest send time so far:
-        if ((int32_t)(oldestSendMsec - lastSendMsec) > 0)
-        {
-            oldestOriginal = original;
-            oldestSendMsec = lastSendMsec;
-        }
     }
 
-    // Record the oldest column for next time to avoid doing this search again
-    Ack.FoundOldest  = true;
-    Ack.OldestColumn = oldestOriginal->Column;
-    return Siamese_NeedMoreData;
+    return Siamese_NothingToRetransmit;
 }
 
-void Encoder::AddDenseColumns(unsigned row, uint8_t* productWorkspace)
+void Encoder::AddDenseColumns(unsigned laneCount, uint8_t* outDataPtr)
 {
     const unsigned recoveryBytes = Window.LongestPacket;
 
     // For each lane:
-    for (unsigned laneIndex = 0; laneIndex < kColumnLaneCount; ++laneIndex)
+    for (unsigned laneIndex = 0; laneIndex < laneCount; ++laneIndex)
     {
-        // Compute the operations to run for this lane and row
-        unsigned opcode = GetRowOpcode(laneIndex, row);
-
-        // For summations into the RecoveryPacket buffer:
-        unsigned mask = 1;
+        // For each column type:
         for (unsigned sumIndex = 0; sumIndex < kColumnSumCount; ++sumIndex)
         {
-            if (opcode & mask)
-            {
-                const GrowingAlignedDataBuffer* sum = Window.GetSum(laneIndex, sumIndex, Window.Count);
-                unsigned addBytes = sum->Bytes;
+            const GrowingAlignedDataBuffer* sum = Window.GetSum(laneIndex, sumIndex, Window.Count);
 
-                if (addBytes > 0)
+            const bool enabled = (sumIndex + laneIndex) % 3 != 1; // Skip some sums
+            if (enabled && sum && sum->GetSize() > 0)
+            {
+                // Add small row
+                const unsigned sumDataBytes = sum->GetSize();
+                const uint8_t* sumDataPtr = sum->GetData();
+
+                const unsigned bytes = (recoveryBytes < sumDataBytes) ? recoveryBytes : sumDataBytes;
+
+                if (laneIndex == 0)
                 {
-                    if (addBytes > recoveryBytes) {
-                        addBytes = recoveryBytes;
+                    memcpy(outDataPtr, sumDataPtr, bytes);
+                }
+                else
+                {
+                    unsigned reportedBytes = bytes - laneIndex;
+                    if (reportedBytes > 0)
+                    {
+                        memcpy(outDataPtr, sumDataPtr + laneIndex, reportedBytes);
                     }
-                    gf256_add_mem(RecoveryPacket.Data, sum->Data, addBytes);
                 }
             }
-            mask <<= 1;
-        }
 
-        // For summations into the ProductWorkspace buffer:
-        for (unsigned sumIndex = 0; sumIndex < kColumnSumCount; ++sumIndex)
-        {
-            if (opcode & mask)
-            {
-                const GrowingAlignedDataBuffer* sum = Window.GetSum(laneIndex, sumIndex, Window.Count);
-                unsigned addBytes = sum->Bytes;
-
-                if (addBytes > 0)
-                {
-                    if (addBytes > recoveryBytes) {
-                        addBytes = recoveryBytes;
-                    }
-                    gf256_add_mem(productWorkspace, sum->Data, addBytes);
-                }
-            }
-            mask <<= 1;
+            outDataPtr += recoveryBytes;
         }
     }
 
-    // Keep track of where the sum ended
     Window.SumEndElement = Window.Count;
 }
 
-void Encoder::AddLightColumns(unsigned row, uint8_t* productWorkspace)
+void Encoder::AddLightColumns(unsigned laneCount, uint8_t* outDataPtr)
 {
     const unsigned startElement = Window.FirstUnremovedElement;
-    SIAMESE_DEBUG_ASSERT(Window.SumEndElement >= startElement);
     const unsigned count = Window.SumEndElement - startElement;
-    SIAMESE_DEBUG_ASSERT(count >= 2);
-    SIAMESE_DEBUG_ASSERT(count <= Window.Count);
 
     PCGRandom prng;
-    prng.Seed(row, count);
+    prng.Seed(0, 0xc8210b4e);
 
-    std::ostringstream* pDebugMsg = nullptr;
-    if (Logger.ShouldLog(logger::Level::Debug))
+    uint8_t* buffer = (uint8_t*)TheAllocator.Allocate(Window.LongestPacket);
+    if (!buffer)
     {
-        pDebugMsg = new std::ostringstream();
-        *pDebugMsg << "LDPC columns: ";
+        Window.EmergencyDisabled = true;
+        return;
     }
 
-    const unsigned pairCount = (count + kPairAddRate - 1) / kPairAddRate;
-    for (unsigned i = 0; i < pairCount; ++i)
+    const unsigned lanesToUse = (laneCount > GF256_STRIDE) ? GF256_STRIDE : laneCount;
+
+    // For each randomly chosen element pair:
+    for (unsigned rxCount = 0; rxCount < kLightCount; ++rxCount)
     {
-        const unsigned element1          = startElement + (prng.Next() % count);
+        // Select two random elements in range
+        unsigned element1 = startElement + (prng.Next() % count);
+        unsigned elementRX = startElement + (prng.Next() % count);
+
+        // Get original for element1
         const OriginalPacket* original1  = Window.GetWindowElement(element1);
-        const unsigned elementRX         = startElement + (prng.Next() % count);
+        // Get original for elementRX
         const OriginalPacket* originalRX = Window.GetWindowElement(elementRX);
 
-        if (pDebugMsg) {
-            *pDebugMsg << element1 << " " << elementRX << " ";
-        }
-
-        SIAMESE_DEBUG_ASSERT(original1->Column  == Window.ColumnStart + element1);
-        SIAMESE_DEBUG_ASSERT(originalRX->Column == Window.ColumnStart + elementRX);
-        SIAMESE_DEBUG_ASSERT(Window.LongestPacket >= original1->Buffer.Bytes);
-        SIAMESE_DEBUG_ASSERT(Window.LongestPacket >= originalRX->Buffer.Bytes);
-
-        gf256_add_mem(RecoveryPacket.Data, original1->Buffer.Data,  original1->Buffer.Bytes);
-        gf256_add_mem(productWorkspace,    originalRX->Buffer.Data, originalRX->Buffer.Bytes);
-    }
-
-    if (pDebugMsg)
-    {
-        Logger.Debug(pDebugMsg->str());
-        delete pDebugMsg;
-    }
-}
-
-SiameseResult Encoder::Encode(SiameseRecoveryPacket& packet)
-{
-    if (Window.EmergencyDisabled) {
-        return Siamese_Disabled;
-    }
-
-    // If there are no packets so far:
-    if (Window.Count <= 0)
-    {
-        packet.DataBytes = 0;
-        return Siamese_NeedMoreData;
-    }
-
-    // Remove any data from the window at this point
-    if (Window.FirstUnremovedElement >= kEncoderRemoveThreshold) {
-        Window.RemoveElements();
-    }
-
-    // Get the number of packets in the window that are in flight (unacked)
-    const unsigned unacknowledgedCount = Window.GetUnacknowledgedCount();
-
-    // If there is only a single packet so far:
-    if (unacknowledgedCount == 1) {
-        return GenerateSinglePacket(packet);
-    }
-
-    // Calculate upper bound on width of sum for this recovery packet
-    SIAMESE_DEBUG_ASSERT(Window.Count + Window.SumErasedCount >= Window.SumStartElement);
-    const unsigned newSumCountUB = Window.Count - Window.SumStartElement + Window.SumErasedCount;
-
-    // If sums should be reset because the range is empty or too large:
-    if (Window.SumEndElement <= Window.SumStartElement ||
-        newSumCountUB >= SIAMESE_MAX_PACKETS)
-    {
-#ifdef SIAMESE_ENABLE_CAUCHY
-        // If the number of packets in flight is small enough, use Cauchy rows for now:
-        if (unacknowledgedCount <= SIAMESE_CAUCHY_THRESHOLD) {
-            return GenerateCauchyPacket(packet);
-        }
-#endif // SIAMESE_ENABLE_CAUCHY
-
-        Logger.Debug("Resetting sums at element ", Window.FirstUnremovedElement);
-
-        Window.ResetSums(Window.FirstUnremovedElement);
-    }
-#ifdef SIAMESE_ENABLE_CAUCHY
-    else
-    {
-        // If the number of packets in flight may indicate Cauchy is better or we need to use it:
-        if (unacknowledgedCount <= SIAMESE_SUM_RESET_THRESHOLD ||
-            newSumCountUB <= SIAMESE_CAUCHY_THRESHOLD)
+        // If neither has data:
+        if ((!original1->Data || original1->LengthBytes <= 0) &&
+            (!originalRX->Data || originalRX->LengthBytes <= 0))
         {
-            SIAMESE_DEBUG_ASSERT(newSumCountUB >= unacknowledgedCount);
-            static_assert(SIAMESE_SUM_RESET_THRESHOLD <= SIAMESE_CAUCHY_THRESHOLD, "Update this too");
-
-            // Stop using sums
-            Window.SumEndElement = Window.SumStartElement;
-
-            return GenerateCauchyPacket(packet);
+            continue;
         }
-    }
-#endif // SIAMESE_ENABLE_CAUCHY
 
-    // Advance row index
-    const unsigned row = NextRow;
-    if (++NextRow >= kRowPeriod) {
-        NextRow = 0;
-    }
-
-    // Reset workspaces
-    const unsigned recoveryBytes = Window.LongestPacket;
-    const unsigned alignedBytes = pktalloc::NextAlignedOffset(recoveryBytes);
-    if (!RecoveryPacket.Initialize(&TheAllocator, 2 * alignedBytes + kMaxRecoveryMetadataBytes))
+            // Generate a new packet from the two chosen ones with some XORs
+    if (original1->Data && original1->LengthBytes > 0)
     {
-        Window.EmergencyDisabled = true;
-        return Siamese_Disabled;
-    }
-    SIAMESE_DEBUG_ASSERT(RecoveryPacket.Bytes >= alignedBytes * 2);
-    memset(RecoveryPacket.Data, 0, alignedBytes * 2);
-    uint8_t* productWorkspace = RecoveryPacket.Data + alignedBytes;
-
-    // Generate the recovery packet
-    AddDenseColumns(row, productWorkspace);
-    AddLightColumns(row, productWorkspace);
-
-    // RecoveryPacket += RX * ProductWorkspace
-    const uint8_t RX = GetRowValue(row);
-    gf256_muladd_mem(RecoveryPacket.Data, RX, productWorkspace, recoveryBytes);
-
-    RecoveryMetadata metadata;
-    SIAMESE_DEBUG_ASSERT(Window.SumEndElement + Window.SumErasedCount >= Window.SumStartElement);
-    metadata.SumCount    = Window.SumEndElement - Window.SumStartElement + Window.SumErasedCount;
-    metadata.LDPCCount   = unacknowledgedCount;
-    metadata.ColumnStart = Window.SumColumnStart;
-    metadata.Row         = row;
-
-    // Serialize metadata into the last few bytes of the packet
-    // Note: This saves an extra copy to move the data around
-    const unsigned footerBytes = SerializeFooter_RecoveryMetadata(metadata, RecoveryPacket.Data + recoveryBytes);
-    packet.Data      = RecoveryPacket.Data;
-    packet.DataBytes = recoveryBytes + footerBytes;
-
-    Stats.Counts[SiameseEncoderStats_RecoveryCount]++;
-    Stats.Counts[SiameseEncoderStats_RecoveryBytes] += packet.DataBytes;
-
-    Logger.Info("Generated Siamese sum recovery packet start=", metadata.ColumnStart, " ldpcCount=", metadata.LDPCCount, " sumCount=", metadata.SumCount, " row=", metadata.Row);
-
-    return Siamese_Success;
-}
-
-SiameseResult Encoder::Get(SiameseOriginalPacket& originalOut)
-{
-    // Note: Keep this in sync with Decoder::Get
-
-    if (Window.EmergencyDisabled) {
-        return Siamese_Disabled;
-    }
-
-    // Note: This also works when Count == 0
-    SIAMESE_DEBUG_ASSERT(originalOut.PacketNum >= Window.ColumnStart);
-    const unsigned element = Window.ColumnToElement(originalOut.PacketNum);
-    if (Window.InvalidElement(element))
-    {
-        // Set default return value
-        originalOut.Data      = nullptr;
-        originalOut.DataBytes = 0;
-        return Siamese_NeedMoreData;
-    }
-
-    // Return the packet data
-    OriginalPacket* original = Window.GetWindowElement(element);
-    if (original->Buffer.Bytes <= 0)
-    {
-        originalOut.Data      = nullptr;
-        originalOut.DataBytes = 0;
-        return Siamese_NeedMoreData;
-    }
-
-    SIAMESE_DEBUG_ASSERT(original->Column == originalOut.PacketNum);
-
-    // Load original data and length
-    if (0 == LoadOriginal(original, originalOut))
-    {
-        Window.EmergencyDisabled = true;
-        return Siamese_Disabled;
-    }
-
-    return Siamese_Success;
-}
-
-SiameseResult Encoder::GenerateSinglePacket(SiameseRecoveryPacket& packet)
-{
-    OriginalPacket* original     = Window.GetWindowElement(Window.FirstUnremovedElement);
-    const unsigned originalBytes = original->Buffer.Bytes;
-
-    // Note: This often does not actually reallocate or move since we overallocate
-    if (!original->Buffer.GrowZeroPadded(&TheAllocator, originalBytes + kMaxRecoveryMetadataBytes))
-    {
-        Window.EmergencyDisabled = true;
-        return Siamese_Disabled;
-    }
-
-    // Set bytes back to original
-    original->Buffer.Bytes = originalBytes;
-
-    // Serialize metadata into the last few bytes of the packet
-    // Note: This saves an extra copy to move the data around
-    RecoveryMetadata metadata;
-    metadata.SumCount    = 1;
-    metadata.LDPCCount   = 1;
-    metadata.ColumnStart = original->Column;
-    metadata.Row         = 0;
-
-    const unsigned footerBytes = SerializeFooter_RecoveryMetadata(metadata, original->Buffer.Data + originalBytes);
-    packet.Data      = original->Buffer.Data;
-    packet.DataBytes = originalBytes + footerBytes;
-
-    Logger.Info("Generated single recovery packet start=", metadata.ColumnStart, " ldpcCount=", metadata.LDPCCount, " sumCount=", metadata.SumCount, " row=", metadata.Row);
-
-    Stats.Counts[SiameseEncoderStats_RecoveryCount]++;
-    Stats.Counts[SiameseEncoderStats_RecoveryBytes] += packet.DataBytes;
-
-    return Siamese_Success;
-}
-
-
-#ifdef SIAMESE_ENABLE_CAUCHY
-
-SiameseResult Encoder::GenerateCauchyPacket(SiameseRecoveryPacket& packet)
-{
-    // Reset recovery packet
-    const unsigned firstElement  = Window.FirstUnremovedElement;
-    const unsigned recoveryBytes = Window.LongestPacket;
-    if (!RecoveryPacket.Initialize(&TheAllocator, recoveryBytes + kMaxRecoveryMetadataBytes))
-    {
-        Window.EmergencyDisabled = true;
-        return Siamese_Disabled;
-    }
-
-    const unsigned unacknowledgedCount = Window.GetUnacknowledgedCount();
-    RecoveryMetadata metadata;
-    metadata.SumCount    = unacknowledgedCount;
-    metadata.LDPCCount   = unacknowledgedCount;
-    metadata.ColumnStart = Window.ElementToColumn(firstElement);
-
-    // We have to recalculate the number of used bytes since the Cauchy/parity rows may be
-    // shorter since they do not need to contain the start of the window which may be acked.
-    unsigned usedBytes = 0;
-
-    // If it is time to generate a new parity row:
-    const unsigned nextParityElement = Window.ColumnToElement(NextParityColumn);
-    if (nextParityElement <= firstElement || IsColumnDeltaNegative(nextParityElement))
-    {
-        // Set next time we write a parity row
-        NextParityColumn = AddColumns(metadata.ColumnStart, unacknowledgedCount);
-
-        // Row 0 is a parity row
-        metadata.Row = 0;
-
-        // Unroll first column
-        OriginalPacket* original = Window.GetWindowElement(firstElement);
-        unsigned originalBytes   = original->Buffer.Bytes;
-
-        memcpy(RecoveryPacket.Data, original->Buffer.Data, originalBytes);
-        // Pad the rest out with zeros to avoid corruption
-        SIAMESE_DEBUG_ASSERT(RecoveryPacket.Bytes >= originalBytes);
-        memset(RecoveryPacket.Data + originalBytes, 0, recoveryBytes - originalBytes);
-
-        usedBytes = originalBytes;
-
-        // For each remaining column:
-        for (unsigned element = firstElement + 1, count = Window.Count; element < count; ++element)
+        memcpy(buffer, original1->Data, original1->LengthBytes);
+        if (original1->LengthBytes < Window.LongestPacket)
         {
-            original      = Window.GetWindowElement(element);
-            originalBytes = original->Buffer.Bytes;
-
-            SIAMESE_DEBUG_ASSERT(RecoveryPacket.Bytes >= originalBytes);
-
-            gf256_add_mem(RecoveryPacket.Data, original->Buffer.Data, originalBytes);
-
-            if (usedBytes < originalBytes)
-                usedBytes = originalBytes;
+            memset(buffer + original1->LengthBytes, 0, Window.LongestPacket - original1->LengthBytes);
         }
     }
     else
     {
-        // Select Cauchy row number
-        const unsigned cauchyRow = NextCauchyRow;
-        metadata.Row = cauchyRow + 1;
-        if (++NextCauchyRow >= kCauchyMaxRows)
-            NextCauchyRow = 0;
-
-        // Unroll first column
-        unsigned cauchyColumn    = metadata.ColumnStart % kCauchyMaxColumns;
-        OriginalPacket* original = Window.GetWindowElement(firstElement);
-        uint8_t y                = CauchyElement(cauchyRow, cauchyColumn);
-        unsigned originalBytes   = original->Buffer.Bytes;
-
-        gf256_mul_mem(RecoveryPacket.Data, original->Buffer.Data, y, originalBytes);
-        // Pad the rest out with zeros to avoid corruption
-        SIAMESE_DEBUG_ASSERT(recoveryBytes >= originalBytes);
-        SIAMESE_DEBUG_ASSERT(RecoveryPacket.Bytes >= originalBytes);
-        memset(RecoveryPacket.Data + originalBytes, 0, recoveryBytes - originalBytes);
-
-        usedBytes = originalBytes;
-
-        // For each remaining column:
-        for (unsigned element = firstElement + 1, count = Window.Count; element < count; ++element)
-        {
-            cauchyColumn  = (cauchyColumn + 1) % kCauchyMaxColumns;
-            original      = Window.GetWindowElement(element);
-            originalBytes = original->Buffer.Bytes;
-            y             = CauchyElement(cauchyRow, cauchyColumn);
-
-            SIAMESE_DEBUG_ASSERT(RecoveryPacket.Bytes >= originalBytes);
-
-            gf256_muladd_mem(RecoveryPacket.Data, y, original->Buffer.Data, originalBytes);
-
-            if (usedBytes < originalBytes)
-                usedBytes = originalBytes;
-        }
+        memset(buffer, 0, Window.LongestPacket);
     }
 
-    // Slap metadata footer on the end
-    const unsigned footerBytes = SerializeFooter_RecoveryMetadata(metadata, RecoveryPacket.Data + usedBytes);
+    if (originalRX->Data && originalRX->LengthBytes > 0)
+    {
+        const unsigned bytes = (originalRX->LengthBytes < Window.LongestPacket)
+            ? originalRX->LengthBytes : Window.LongestPacket;
 
-    packet.Data      = RecoveryPacket.Data;
-    packet.DataBytes = usedBytes + footerBytes;
+        gf256_add_mem(buffer, originalRX->Data, bytes);
+    }
 
-    Logger.Info("Generated Cauchy/parity recovery packet start=", metadata.ColumnStart, " ldpcCount=", metadata.LDPCCount, " sumCount=", metadata.SumCount, " row=", metadata.Row);
+    // Copy combined data to output
+    memcpy(outDataPtr, buffer, Window.LongestPacket);
+    outDataPtr += Window.LongestPacket;
+    }
 
-    Stats.Counts[SiameseEncoderStats_RecoveryCount]++;
-    Stats.Counts[SiameseEncoderStats_RecoveryBytes] += packet.DataBytes;
-
-    return Siamese_Success;
+    TheAllocator.Free(buffer);
 }
 
-#endif // SIAMESE_ENABLE_CAUCHY
-
-SiameseResult Encoder::GetStatistics(uint64_t* statsOut, unsigned statsCount)
+SiameseResult Encoder::GetRecoveryPacket(
+    unsigned packetNum,
+    uint8_t* buffer,
+    unsigned bufferBytes,
+    unsigned& outRecoveryBytes)
 {
-    if (statsCount > SiameseEncoderStats_Count)
-        statsCount = SiameseEncoderStats_Count;
+    if (Window.EmergencyDisabled)
+        return Siamese_Disabled;
 
-    // Fill in memory allocated
-    Stats.Counts[SiameseEncoderStats_MemoryUsed] = TheAllocator.GetMemoryAllocatedBytes();
+    const unsigned laneCount = GF256_STRIDE;
+    const unsigned columnSumCount = kColumnSumCount;
+    const unsigned bytesPerRow = Window.LongestPacket;
 
-    for (unsigned i = 0; i < statsCount; ++i)
-        statsOut[i] = Stats.Counts[i];
+    const unsigned requiredBytes =
+        (laneCount * columnSumCount + kLightCount) * bytesPerRow;
 
+    if (bufferBytes < requiredBytes)
+        return Siamese_NeedMoreData;
+
+    AddDenseColumns(laneCount, buffer);
+    AddLightColumns(laneCount, buffer + laneCount * columnSumCount * bytesPerRow);
+
+    outRecoveryBytes = requiredBytes;
     return Siamese_Success;
 }
-
 
 } // namespace siamese
