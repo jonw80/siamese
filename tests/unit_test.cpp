@@ -35,6 +35,8 @@ using namespace std;
 #include "../siamese.h"
 #include "../SiameseTools.h"
 #include "../SiameseSerializers.h"
+#include <unistd.h>  // For usleep()
+
 
 #define TEST_VARIABLE_SIZED_DATA
 
@@ -1268,7 +1270,7 @@ void HARQSimulation::Run(unsigned seed)
             break;
         }
 
-        ::Sleep(kPacketIntervalMsec); // ms between rounds
+        usleep(kPacketIntervalMsec * 1000); // usleep takes microseconds
 
         // TODO: Reordering
 

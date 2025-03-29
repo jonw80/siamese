@@ -63,10 +63,12 @@ set(INCLUDE_FILES
     SiameseCommon.h
     SiameseDecoder.h
     SiameseEncoder.h
+    GrowingAlignedDataBuffer.h   # <-- ADD THIS
     siamese.h
     SiameseSerializers.h
     SiameseTools.h
 )
+
 set(SOURCE_FILES
     ${INCLUDE_FILES}
     gf256.cpp

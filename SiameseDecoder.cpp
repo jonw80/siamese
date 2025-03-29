@@ -29,6 +29,8 @@
 
 #include "SiameseDecoder.h"
 #include "SiameseSerializers.h"
+#include "GrowingAlignedDataBuffer.h"
+
 
 namespace siamese {
 
