@@ -8,7 +8,7 @@
 
 namespace pktalloc {
 
-constexpr size_t PKTALLOC_ALIGN_BYTES = 16; // Define alignment constant
+constexpr size_t PKTALLOC_ALIGN_BYTES = 32; // Updated to match GF256_ALIGN_BYTES
 
 enum class ReallocType {
     Uninitialized,
