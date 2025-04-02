@@ -8,9 +8,10 @@ using namespace siamese;
 
 extern "C" {
 
-// Define gf256_init_ to resolve the linker error
-void gf256_init_() {
-    // Implementation or placeholder
+// Define gf256_init_ to match its declaration in gf256.h
+int gf256_init_(int version) {
+    (void)version; // Suppress unused parameter warning
+    return 0; // Placeholder implementation
 }
 
 // Siamese library initialization
