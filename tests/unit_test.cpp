@@ -1801,6 +1801,10 @@ int main()
     {
         HARQSimulation simulation;
         simulation.Run(seed);
+
+        // Break condition to avoid infinite loop
+        if (seed >= 10) // Example limit for testing
+            break;
     }
 #endif
 #ifdef TEST_STREAMING
@@ -1810,7 +1814,6 @@ int main()
     BlockRecoveryTest();
 #endif
 
-    getchar();
-
+    // Remove getchar() to avoid blocking in non-interactive environments
     return 0;
 }

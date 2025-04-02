@@ -18,7 +18,7 @@ SiameseEncoder siamese_encoder_create() {
     return new Encoder();
 }
 
-void siamese_encoder_destroy(SiameseEncoder encoder) {
+void siamese_encoder_free(SiameseEncoder encoder) {
     if (encoder) {
         delete static_cast<Encoder*>(encoder);
     }
@@ -28,7 +28,7 @@ SiameseResult siamese_encoder_add(SiameseEncoder encoder, const SiameseOriginalP
     if (!encoder || !packet) {
         return Siamese_NeedMoreData;
     }
-    
+
     return static_cast<Encoder*>(encoder)->Add(const_cast<SiameseOriginalPacket&>(*packet));
 }
 
@@ -36,7 +36,7 @@ SiameseResult siamese_encoder_retransmit(SiameseEncoder encoder, const SiameseOr
     if (!encoder || !packet) {
         return Siamese_NeedMoreData;
     }
-    
+
     return static_cast<Encoder*>(encoder)->Retransmit(const_cast<SiameseOriginalPacket&>(*packet));
 }
 
@@ -44,12 +44,12 @@ SiameseResult siamese_encode(SiameseEncoder encoder, SiameseRecoveryPacket* reco
     if (!encoder || !recoveryOut) {
         return Siamese_NeedMoreData;
     }
-    
+
     unsigned usedBytes = 0;
     return static_cast<Encoder*>(encoder)->GetRecoveryPacket(
         0, // Default recovery ID
-        static_cast<uint8_t*>(recoveryOut->Data),
-        recoveryOut->DataBytes,
+        static_cast<uint8_t*>(recoveryOut->data),
+        recoveryOut->dataBytes,
         usedBytes);
 }
 
@@ -57,7 +57,7 @@ SiameseResult siamese_encoder_get_recovery(SiameseEncoder encoder, unsigned id, 
     if (!encoder || !data || !usedBytesOut) {
         return Siamese_NeedMoreData;
     }
-    
+
     return static_cast<Encoder*>(encoder)->GetRecoveryPacket(id, data, maxBytes, *usedBytesOut);
 }
 
@@ -65,7 +65,7 @@ SiameseResult siamese_acknowledge(SiameseEncoder encoder, const uint8_t* data, u
     if (!encoder || !data || !ackedOut) {
         return Siamese_NeedMoreData;
     }
-    
+
     return static_cast<Encoder*>(encoder)->Acknowledge(data, bytes, *ackedOut);
 }
 
@@ -73,18 +73,15 @@ SiameseResult siamese_encoder_get_statistics(SiameseEncoder encoder, uint64_t* s
     if (!encoder || !statsOut) {
         return Siamese_NeedMoreData;
     }
-    
-    // This would normally call into the encoder's GetStatistics method
-    // For now, just zero out the array as a placeholder
+
+    // Placeholder for actual statistics gathering
     for (unsigned i = 0; i < statsCount; ++i) {
         statsOut[i] = 0;
     }
-    
+
     return Siamese_Success;
 }
 
 // Decoder functions are implemented in SiameseDecoder.cpp
-// We don't need any forwarding declarations here since the Decoder class
-// implementation is now defined in SiameseDecoder.cpp
 
 } // extern "C"

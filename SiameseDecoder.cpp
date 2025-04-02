@@ -30,12 +30,8 @@
 #include "SiameseDecoder.h"
 #include "SiameseSerializers.h"
 #include "GrowingAlignedDataBuffer.h"
-#include "SiameseDecoder.h"
 #include "siamese.h"  // for SiameseResult
-#include "SiameseConstants.h"  // for the packet limits
-
-
-namespace siamese {
+#include "SiameseConstants.h"  // for the packet limitsnamespace siamese {
 
 #ifdef SIAMESE_DECODER_DUMP_VERBOSE
     static logger::Channel Logger("Decoder", logger::Level::Debug);
