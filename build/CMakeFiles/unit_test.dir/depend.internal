@@ -48,4 +48,6 @@ CMakeFiles/unit_test.dir/siamese.cpp.o
  /workspaces/siamese/siamese.cpp
  /workspaces/siamese/siamese.h
 CMakeFiles/unit_test.dir/unit_test/main.cpp.o
+ ../SiameseResult.h
+ ../siamese.h
  /workspaces/siamese/unit_test/main.cpp

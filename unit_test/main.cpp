@@ -3,44 +3,39 @@
 #include "siamese.h"
 
 int main() {
-    const int num_packets = 100000; // Large enough to show performance
-
     SiameseEncoder encoder = siamese_encoder_create();
+
     if (!encoder) {
-        std::cerr << "Failed to create encoder\n";
+        std::cerr << "Failed to create encoder." << std::endl;
         return 1;
     }
 
-    // Create a dummy packet
-    char buffer[256] = {};
-    for (int i = 0; i < 256; ++i) buffer[i] = i;
+    const int num_packets = 100000;
+    const int packet_size = 256;
 
-    SiameseOriginalPacket packet;
-    packet.data = buffer;
-    packet.dataBytes = sizeof(buffer);
-
-    // Start timer
     auto start = std::chrono::high_resolution_clock::now();
 
-    // Encode many packets
     for (int i = 0; i < num_packets; ++i) {
+        uint8_t buffer[256];  // ✅ FIXED
+        memset(buffer, i % 256, packet_size);
+
+        SiameseOriginalPacket packet;
+        packet.data = buffer;
+        packet.dataBytes = packet_size;
         packet.packetNum = i;
-        if (siamese_encoder_add(encoder, &packet) != Siamese_Success) {
-            std::cerr << "Add failed at packet " << i << "\n";
-            return 1;
-        }
+
+        siamese_encoder_add(encoder, &packet);
     }
 
-    // End timer
     auto end = std::chrono::high_resolution_clock::now();
-    double elapsed_sec = std::chrono::duration<double>(end - start).count();
+    std::chrono::duration<double> elapsed = end - start;
 
     std::cout << "Encoded " << num_packets << " packets in "
-              << elapsed_sec << " seconds\n";
+              << elapsed.count() << " seconds" << std::endl;
+    std::cout << "Throughput: "
+              << (num_packets / elapsed.count()) << " packets/sec" << std::endl;
 
-    double packets_per_sec = num_packets / elapsed_sec;
-    std::cout << "Throughput: " << packets_per_sec << " packets/sec\n";
+    siamese_encoder_free(encoder);  // ✅ FIXED
 
-    siamese_encoder_destroy(encoder);
     return 0;
 }

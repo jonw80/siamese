@@ -6,7 +6,19 @@
 
 #IncludeRegexTransform: 
 
+../SiameseResult.h
+
+../siamese.h
+stdint.h
+-
+SiameseResult.h
+../SiameseResult.h
+
 /workspaces/siamese/unit_test/main.cpp
 iostream
 -
+chrono
+-
+siamese.h
+/workspaces/siamese/unit_test/siamese.h
 

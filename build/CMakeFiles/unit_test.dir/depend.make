@@ -47,5 +47,7 @@ CMakeFiles/unit_test.dir/siamese.cpp.o: ../pktalloc.h
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../siamese.cpp
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../siamese.h
 
+CMakeFiles/unit_test.dir/unit_test/main.cpp.o: ../SiameseResult.h
+CMakeFiles/unit_test.dir/unit_test/main.cpp.o: ../siamese.h
 CMakeFiles/unit_test.dir/unit_test/main.cpp.o: ../unit_test/main.cpp
 
