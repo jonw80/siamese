@@ -41,7 +41,7 @@
 #include "siamese.h"
 #include "SiameseTools.h"
 
-#include "PacketAllocator.h"lace PacketAllocator.h with pktalloc.h
+#include "pktalloc.h" // Replace PacketAllocator.h with pktalloc.h
 #include "Logger.h"
 
 #include "gf256.h"

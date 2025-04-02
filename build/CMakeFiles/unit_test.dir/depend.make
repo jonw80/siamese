@@ -46,10 +46,15 @@ CMakeFiles/unit_test.dir/SiameseTools.cpp.o: ../SiameseTools.h
 CMakeFiles/unit_test.dir/gf256.cpp.o: ../gf256.cpp
 CMakeFiles/unit_test.dir/gf256.cpp.o: ../gf256.h
 
+CMakeFiles/unit_test.dir/siamese.cpp.o: ../CheckedRegionState.h
+CMakeFiles/unit_test.dir/siamese.cpp.o: ../DecoderPacketWindow.h
+CMakeFiles/unit_test.dir/siamese.cpp.o: ../RecoveryMatrixState.h
+CMakeFiles/unit_test.dir/siamese.cpp.o: ../RecoveryPacketList.h
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../SiameseDecoder.h
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../SiameseEncoder.h
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../SiameseTypes.h
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../gf256.h
+CMakeFiles/unit_test.dir/siamese.cpp.o: ../pktalloc.h
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../siamese.cpp
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../siamese.h
 

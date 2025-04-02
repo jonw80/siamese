@@ -13,6 +13,10 @@ vector
 -
 SiameseTypes.h
 /workspaces/siamese/SiameseTypes.h
+SiameseDecoder.h
+/workspaces/siamese/SiameseDecoder.h
+RecoveryMatrixState.h
+/workspaces/siamese/RecoveryMatrixState.h
 
 /workspaces/siamese/GrowingAlignedDataBuffer.h
 cstdint
@@ -55,6 +59,8 @@ cstdint
 -
 vector
 -
+CheckedRegionState.h
+/workspaces/siamese/CheckedRegionState.h
 
 /workspaces/siamese/SiameseCommon.cpp
 SiameseCommon.h
@@ -114,6 +120,10 @@ CheckedRegionState.h
 RecoveryMatrixState.h
 /workspaces/siamese/RecoveryMatrixState.h
 
+/workspaces/siamese/SiameseEncoder.h
+SiameseTypes.h
+/workspaces/siamese/SiameseTypes.h
+
 /workspaces/siamese/SiameseSerializers.h
 siamese.h
 /workspaces/siamese/siamese.h
@@ -165,6 +175,16 @@ cstdlib
 -
 cstring
 -
+
+/workspaces/siamese/siamese.cpp
+siamese.h
+/workspaces/siamese/siamese.h
+SiameseEncoder.h
+/workspaces/siamese/SiameseEncoder.h
+SiameseDecoder.h
+/workspaces/siamese/SiameseDecoder.h
+gf256.h
+/workspaces/siamese/gf256.h
 
 /workspaces/siamese/siamese.h
 stdint.h
