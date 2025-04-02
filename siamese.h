@@ -9,15 +9,14 @@ extern "C" {
 
 // Forward-declared types now fully defined here
 typedef struct SiameseOriginalPacket {
-    uint32_t id;
-    uint8_t* data;
-    unsigned bytes;
+    const uint8_t* data;
+    unsigned dataBytes;
+    unsigned packetNum;
 } SiameseOriginalPacket;
 
 typedef struct SiameseRecoveryPacket {
-    uint32_t id;
-    uint8_t* data;
-    unsigned bytes;
+    const uint8_t* data;
+    unsigned dataBytes;
 } SiameseRecoveryPacket;
 
 // Opaque encoder/decoder handles

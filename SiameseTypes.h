@@ -16,16 +16,22 @@
 
 typedef int SiameseResult;
 
+#ifndef SIAMESE_ORIGINAL_PACKET_DEFINED
+#define SIAMESE_ORIGINAL_PACKET_DEFINED
 struct SiameseOriginalPacket {
     const uint8_t* data;
     unsigned dataBytes;
     unsigned packetNum;
 };
+#endif
 
+#ifndef SIAMESE_RECOVERY_PACKET_DEFINED
+#define SIAMESE_RECOVERY_PACKET_DEFINED
 struct SiameseRecoveryPacket {
     const uint8_t* data;
     unsigned dataBytes;
 };
+#endif
 
 typedef void* SiameseEncoder;
 typedef void* SiameseDecoder;

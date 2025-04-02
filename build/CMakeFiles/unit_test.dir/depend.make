@@ -13,6 +13,7 @@ CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../SiameseCommon.cpp
 CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../SiameseCommon.h
 CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../SiameseSerializers.h
 CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../SiameseTools.h
+CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../SiameseTypes.h
 CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../gf256.h
 CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../siamese.h
 
@@ -51,6 +52,7 @@ CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../PacketAllocator.h
 CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../SiameseCommon.h
 CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../SiameseSerializers.h
 CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../SiameseTools.h
+CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../SiameseTypes.h
 CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../gf256.h
 CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../siamese.h
 CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../tests/TestTools.cpp
