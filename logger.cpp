@@ -2,9 +2,6 @@
 
 namespace logger {
 
-// Constructor for Channel
-Channel::Channel(const char* name, Level minLevel);
-
 // Update kLevelStrings to match the Level enum
 static const char* kLevelStrings[(int)Level::Count] = {
     "Off", "Error", "Warning", "Info", "Debug"
