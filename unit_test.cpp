@@ -4,11 +4,10 @@
 int main() {
     SiameseEncoder encoder = siamese_encoder_create();
 
-    SiameseOriginalPacket packet = {
-        .data = nullptr,
-        .dataBytes = 0,
-        .packetNum = 0,
-    };
+    SiameseOriginalPacket packet;
+    packet.data = nullptr;
+    packet.dataBytes = 0;
+    packet.packetNum = 0;
 
     if (siamese_encoder_add(encoder, &packet) == Siamese_Success) {
         // Test passed for Add
