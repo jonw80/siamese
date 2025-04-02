@@ -43,16 +43,6 @@
 
 namespace logger {
 
-enum class Level {
-    Trace,
-    Debug,
-    Info,
-    Warning,
-    Error,
-    Silent,
-    Count // Ensure this matches the number of levels above
-};
-
 // Update the level names array
 const char* LevelNames[(int)Level::Count] = {
     "Trace", "Debug", "Info", "Warning", "Error", "Silent"
