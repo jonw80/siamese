@@ -27,7 +27,8 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-#pragma once
+#ifndef LOGGER_H
+#define LOGGER_H
 
 /** \page Logger Logging Module
 
@@ -146,16 +147,10 @@ static const size_t kWorkQueueLimit = 1024;
 // Level
 
 /// Logging level
-enum class Level
-{
-    Trace,   ///< Trace-level logging (off by default)
-    Debug,   ///< Debug logging (on by default)
-    Info,    ///< Info (normal) logging
-    Warning, ///< Warnings
-    Error,   ///< Errors
-    Silent,  ///< Silent level (always off)
-
-    Count    ///< For static assert
+enum class Level {
+    Info,
+    Warning,
+    Error
 };
 
 /// Stringize level values
@@ -291,12 +286,10 @@ protected:
 
 /// Logging channel object: Each instance is given a channel name, and then the
 /// logging channel is used to output log messages.
-class Channel
-{
+class Channel {
 public:
     /// Specify channel name and minimum output level (Level::Silent for silent)
     explicit Channel(const char* name, Level minLevel);
-
 
     /// Channel name
     const char* const ChannelName;
@@ -304,18 +297,15 @@ public:
     /// Minimum channel log level
     const Level ChannelMinLevel;
 
-
     /// Should we log at this level?
     LOGGER_FORCE_INLINE bool ShouldLog(Level level) const
     {
         return level >= ChannelMinLevel;
     }
 
-
     /// Thread-safe get or set runtime-selected prefix for the logging channel
     std::string GetPrefix() const;
     void SetPrefix(const std::string& prefix);
-
 
     /// Log a message at a specified level
     template<typename... Args>
@@ -373,7 +363,6 @@ protected:
     mutable std::mutex PrefixLock;
     std::string Prefix;
 
-
     template<typename T>
     LOGGER_FORCE_INLINE void writeLogBuffer(LogStringBuffer& buffer, T&& arg) const
     {
@@ -414,5 +403,6 @@ LOGGER_FORCE_INLINE void Stop()
     OutputWorker::GetInstance().Stop();
 }
 
-
 } // namespace logger
+
+#endif // LOGGER_H

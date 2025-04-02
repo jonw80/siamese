@@ -17,6 +17,7 @@ CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../SiameseSerializers.h
 CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../SiameseTools.h
 CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../SiameseTypes.h
 CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../gf256.h
+CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../logger.h
 CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../pktalloc.h
 CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../siamese.h
 
@@ -25,8 +26,8 @@ CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.h
 CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../SiameseResult.h
 CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../siamese.h
 
-CMakeFiles/siamese.dir/gf256.cpp.o: ../gf256.cpp
-CMakeFiles/siamese.dir/gf256.cpp.o: ../gf256.h
+CMakeFiles/siamese.dir/logger.cpp.o: ../logger.cpp
+CMakeFiles/siamese.dir/logger.cpp.o: ../logger.h
 
 CMakeFiles/siamese.dir/siamese.cpp.o: ../CheckedRegionState.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../DecoderPacketWindow.h

@@ -57,17 +57,7 @@ find_package(Threads REQUIRED)
 # Source Files
 
 set(INCLUDE_FILES
-    gf256.h
     Logger.h
-    PacketAllocator.h
-    SiameseCommon.h
-    SiameseDecoder.h
-    SiameseEncoder.h
-    Encoder.h
-    GrowingAlignedDataBuffer.h
-    siamese.h
-    SiameseSerializers.h
-    SiameseTools.h
 )
 
 set(SOURCE_FILES
@@ -119,4 +109,5 @@ set(SOURCES
     # Add other source files as needed
 )
 
+# Ensure Logger.h is included in the build process
 add_library(siamese STATIC ${SOURCES})

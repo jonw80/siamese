@@ -35,7 +35,7 @@
 #include "DecoderPacketWindow.h" // For DecoderPacketWindow
 #include "SiameseResult.h" // For SiameseResult
 #include "SiameseCommon.h" // Include OriginalPacket
-#include "logger.h" // Ensure logger header is included
+#include "Logger.h" // Use the unified Logger header
 
 namespace siamese {
 
