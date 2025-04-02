@@ -57,61 +57,9 @@ include CMakeFiles/unit_test.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/unit_test.dir/flags.make
 
-CMakeFiles/unit_test.dir/gf256.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/gf256.cpp.o: ../gf256.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/unit_test.dir/gf256.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/gf256.cpp.o -c /workspaces/siamese/gf256.cpp
-
-CMakeFiles/unit_test.dir/gf256.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/gf256.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/gf256.cpp > CMakeFiles/unit_test.dir/gf256.cpp.i
-
-CMakeFiles/unit_test.dir/gf256.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/gf256.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/gf256.cpp -o CMakeFiles/unit_test.dir/gf256.cpp.s
-
-CMakeFiles/unit_test.dir/Logger.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/Logger.cpp.o: ../Logger.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/unit_test.dir/Logger.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/Logger.cpp.o -c /workspaces/siamese/Logger.cpp
-
-CMakeFiles/unit_test.dir/Logger.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/Logger.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/Logger.cpp > CMakeFiles/unit_test.dir/Logger.cpp.i
-
-CMakeFiles/unit_test.dir/Logger.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/Logger.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/Logger.cpp -o CMakeFiles/unit_test.dir/Logger.cpp.s
-
-CMakeFiles/unit_test.dir/PacketAllocator.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/PacketAllocator.cpp.o: ../PacketAllocator.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/unit_test.dir/PacketAllocator.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/PacketAllocator.cpp.o -c /workspaces/siamese/PacketAllocator.cpp
-
-CMakeFiles/unit_test.dir/PacketAllocator.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/PacketAllocator.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/PacketAllocator.cpp > CMakeFiles/unit_test.dir/PacketAllocator.cpp.i
-
-CMakeFiles/unit_test.dir/PacketAllocator.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/PacketAllocator.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/PacketAllocator.cpp -o CMakeFiles/unit_test.dir/PacketAllocator.cpp.s
-
-CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../SiameseCommon.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/unit_test.dir/SiameseCommon.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/SiameseCommon.cpp.o -c /workspaces/siamese/SiameseCommon.cpp
-
-CMakeFiles/unit_test.dir/SiameseCommon.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/SiameseCommon.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/SiameseCommon.cpp > CMakeFiles/unit_test.dir/SiameseCommon.cpp.i
-
-CMakeFiles/unit_test.dir/SiameseCommon.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/SiameseCommon.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/SiameseCommon.cpp -o CMakeFiles/unit_test.dir/SiameseCommon.cpp.s
-
 CMakeFiles/unit_test.dir/siamese.cpp.o: CMakeFiles/unit_test.dir/flags.make
 CMakeFiles/unit_test.dir/siamese.cpp.o: ../siamese.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/unit_test.dir/siamese.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/unit_test.dir/siamese.cpp.o"
 	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/siamese.cpp.o -c /workspaces/siamese/siamese.cpp
 
 CMakeFiles/unit_test.dir/siamese.cpp.i: cmake_force
@@ -122,100 +70,17 @@ CMakeFiles/unit_test.dir/siamese.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/siamese.cpp.s"
 	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/siamese.cpp -o CMakeFiles/unit_test.dir/siamese.cpp.s
 
-CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseDecoder.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o -c /workspaces/siamese/SiameseDecoder.cpp
-
-CMakeFiles/unit_test.dir/SiameseDecoder.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/SiameseDecoder.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/SiameseDecoder.cpp > CMakeFiles/unit_test.dir/SiameseDecoder.cpp.i
-
-CMakeFiles/unit_test.dir/SiameseDecoder.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/SiameseDecoder.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/SiameseDecoder.cpp -o CMakeFiles/unit_test.dir/SiameseDecoder.cpp.s
-
-CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o -c /workspaces/siamese/SiameseEncoder.cpp
-
-CMakeFiles/unit_test.dir/SiameseEncoder.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/SiameseEncoder.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/SiameseEncoder.cpp > CMakeFiles/unit_test.dir/SiameseEncoder.cpp.i
-
-CMakeFiles/unit_test.dir/SiameseEncoder.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/SiameseEncoder.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/SiameseEncoder.cpp -o CMakeFiles/unit_test.dir/SiameseEncoder.cpp.s
-
-CMakeFiles/unit_test.dir/SiameseTools.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/SiameseTools.cpp.o: ../SiameseTools.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/unit_test.dir/SiameseTools.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/SiameseTools.cpp.o -c /workspaces/siamese/SiameseTools.cpp
-
-CMakeFiles/unit_test.dir/SiameseTools.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/SiameseTools.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/SiameseTools.cpp > CMakeFiles/unit_test.dir/SiameseTools.cpp.i
-
-CMakeFiles/unit_test.dir/SiameseTools.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/SiameseTools.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/SiameseTools.cpp -o CMakeFiles/unit_test.dir/SiameseTools.cpp.s
-
-CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/tests/TestTools.cpp.o: ../tests/TestTools.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/unit_test.dir/tests/TestTools.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/tests/TestTools.cpp.o -c /workspaces/siamese/tests/TestTools.cpp
-
-CMakeFiles/unit_test.dir/tests/TestTools.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/tests/TestTools.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/tests/TestTools.cpp > CMakeFiles/unit_test.dir/tests/TestTools.cpp.i
-
-CMakeFiles/unit_test.dir/tests/TestTools.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/tests/TestTools.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/tests/TestTools.cpp -o CMakeFiles/unit_test.dir/tests/TestTools.cpp.s
-
-CMakeFiles/unit_test.dir/tests/unit_test.cpp.o: CMakeFiles/unit_test.dir/flags.make
-CMakeFiles/unit_test.dir/tests/unit_test.cpp.o: ../tests/unit_test.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/unit_test.dir/tests/unit_test.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/unit_test.dir/tests/unit_test.cpp.o -c /workspaces/siamese/tests/unit_test.cpp
-
-CMakeFiles/unit_test.dir/tests/unit_test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/unit_test.dir/tests/unit_test.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/tests/unit_test.cpp > CMakeFiles/unit_test.dir/tests/unit_test.cpp.i
-
-CMakeFiles/unit_test.dir/tests/unit_test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/unit_test.dir/tests/unit_test.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/tests/unit_test.cpp -o CMakeFiles/unit_test.dir/tests/unit_test.cpp.s
-
 # Object files for target unit_test
 unit_test_OBJECTS = \
-"CMakeFiles/unit_test.dir/gf256.cpp.o" \
-"CMakeFiles/unit_test.dir/Logger.cpp.o" \
-"CMakeFiles/unit_test.dir/PacketAllocator.cpp.o" \
-"CMakeFiles/unit_test.dir/SiameseCommon.cpp.o" \
-"CMakeFiles/unit_test.dir/siamese.cpp.o" \
-"CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o" \
-"CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o" \
-"CMakeFiles/unit_test.dir/SiameseTools.cpp.o" \
-"CMakeFiles/unit_test.dir/tests/TestTools.cpp.o" \
-"CMakeFiles/unit_test.dir/tests/unit_test.cpp.o"
+"CMakeFiles/unit_test.dir/siamese.cpp.o"
 
 # External object files for target unit_test
 unit_test_EXTERNAL_OBJECTS =
 
-unit_test: CMakeFiles/unit_test.dir/gf256.cpp.o
-unit_test: CMakeFiles/unit_test.dir/Logger.cpp.o
-unit_test: CMakeFiles/unit_test.dir/PacketAllocator.cpp.o
-unit_test: CMakeFiles/unit_test.dir/SiameseCommon.cpp.o
 unit_test: CMakeFiles/unit_test.dir/siamese.cpp.o
-unit_test: CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o
-unit_test: CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o
-unit_test: CMakeFiles/unit_test.dir/SiameseTools.cpp.o
-unit_test: CMakeFiles/unit_test.dir/tests/TestTools.cpp.o
-unit_test: CMakeFiles/unit_test.dir/tests/unit_test.cpp.o
 unit_test: CMakeFiles/unit_test.dir/build.make
 unit_test: CMakeFiles/unit_test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable unit_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable unit_test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/unit_test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

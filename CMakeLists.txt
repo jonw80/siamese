@@ -99,7 +99,13 @@ set(SOURCE_FILES
 
 # Application
 
-add_executable(unit_test ${SOURCE_FILES})
+set(SOURCES
+    siamese.cpp
+    gf256_arm64.s
+    # Add other source files here
+)
+
+add_executable(unit_test ${SOURCES})
 target_link_libraries(unit_test
     Threads::Threads
 )
