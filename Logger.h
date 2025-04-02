@@ -353,13 +353,6 @@ public:
         Log(Level::Debug, std::forward<Args>(args)...);
     }
 
-    /// Log a Trace level message
-    template<typename... Args>
-    LOGGER_FORCE_INLINE void Trace(Args&&... args) const
-    {
-        // Removed invalid Level::Trace reference
-    }
-
 protected:
     /// Runtime-selected channel prefix
     mutable std::mutex PrefixLock;
