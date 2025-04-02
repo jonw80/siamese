@@ -2,6 +2,7 @@
 #define SIAMESE_DECODER_H
 
 #include <stdint.h>
+#include "SiameseTypes.h"
 
 namespace siamese {
 

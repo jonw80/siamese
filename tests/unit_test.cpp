@@ -35,6 +35,7 @@ using namespace std;
 #include "../siamese.h"
 #include "../SiameseTools.h"
 #include "../SiameseSerializers.h"
+#include "SiameseTypes.h"
 #include <unistd.h>  // For usleep()
 
 
@@ -231,8 +232,9 @@ static void BlockRecoveryTest()
                 SetPacket(i, buffer, bytes);
 
                 SiameseOriginalPacket original;
-                original.Data = buffer;
-                original.DataBytes = bytes;
+                original.data = buffer;
+                original.dataBytes = bytes;
+                original.packetNum = i;
                 {
                     t_siamese_encoder_add.BeginCall();
                     int result = siamese_encoder_add(encoder, &original);
@@ -322,9 +324,9 @@ static void BlockRecoveryTest()
                         {
                             //cout << packets[i].PacketNum << " ";
 
-                            if (!CheckPacket(packets[i].PacketNum, packets[i].Data, packets[i].DataBytes))
+                            if (!CheckPacket(packets[i].packetNum, packets[i].data, packets[i].dataBytes))
                             {
-                                Logger.Error("Packet check failed for ", i, ".DataBytes = ", packets[i].DataBytes);
+                                Logger.Error("Packet check failed for ", i, ".DataBytes = ", packets[i].dataBytes);
                                 SIAMESE_DEBUG_BREAK();
                                 return;
                             }
@@ -441,8 +443,9 @@ static void StreamingTest()
         SetPacket(PacketId, originalPacket, originalBytes);
 
         SiameseOriginalPacket original;
-        original.Data = originalPacket;
-        original.DataBytes = originalBytes;
+        original.data = originalPacket;
+        original.dataBytes = originalBytes;
+        original.packetNum = PacketId;
 
         {
             t_siamese_encoder_add.BeginCall();
@@ -454,7 +457,7 @@ static void StreamingTest()
                 SIAMESE_DEBUG_BREAK();
                 return;
             }
-            SIAMESE_DEBUG_ASSERT(original.PacketNum == PacketId);
+            SIAMESE_DEBUG_ASSERT(original.packetNum == PacketId);
             PacketId++;
         }
 
@@ -463,10 +466,10 @@ static void StreamingTest()
         if (!Lost)
         {
             // If this is the next packet in sequence:
-            if (original.PacketNum == NextExpectedPacket)
+            if (original.packetNum == NextExpectedPacket)
             {
                 NextExpectedPacket = SIAMESE_PACKET_NUM_INC(NextExpectedPacket);
-                Logger.Trace("Received in sequence: ", original.PacketNum);
+                Logger.Trace("Received in sequence: ", original.packetNum);
                 if (NextExpectedPacket == kLastPacket)
                     goto DoneDecoding;
             }
@@ -483,7 +486,7 @@ static void StreamingTest()
         }
         else
         {
-            Logger.Trace("** Lost ", original.PacketNum);
+            Logger.Trace("** Lost ", original.packetNum);
             ++lostOriginalCount;
         }
 
@@ -544,14 +547,14 @@ static void StreamingTest()
                     {
                         for (unsigned i = 0; i < packetCount; ++i)
                         {
-                            if (!CheckPacket(packets[i].PacketNum, packets[i].Data, packets[i].DataBytes))
+                            if (!CheckPacket(packets[i].packetNum, packets[i].data, packets[i].dataBytes))
                             {
                                 Logger.Error("Corrupted data after decode");
                                 SIAMESE_DEBUG_BREAK();
                                 return;
                             }
 
-                            const unsigned packetNum = packets[i].PacketNum;
+                            const unsigned packetNum = packets[i].packetNum;
 
                             // If this is the next packet in sequence:
                             if (packetNum == NextExpectedPacket)
@@ -564,7 +567,7 @@ static void StreamingTest()
                                 for (;;)
                                 {
                                     SiameseOriginalPacket original;
-                                    original.PacketNum = NextExpectedPacket;
+                                    original.packetNum = NextExpectedPacket;
 
                                     t_siamese_decode.BeginCall();
                                     int getResult = siamese_decoder_get(decoder, &original);
@@ -572,8 +575,8 @@ static void StreamingTest()
                                     if (getResult == Siamese_Success)
                                     {
                                         NextExpectedPacket = SIAMESE_PACKET_NUM_INC(NextExpectedPacket);
-                                        Logger.Trace("Resumed sequence: ", original.PacketNum);
-                                        if (!CheckPacket(original.PacketNum, original.Data, original.DataBytes))
+                                        Logger.Trace("Resumed sequence: ", original.packetNum);
+                                        if (!CheckPacket(original.packetNum, original.data, original.dataBytes))
                                         {
                                             Logger.Error("Corrupted data after decode2");
                                             SIAMESE_DEBUG_BREAK();
@@ -610,8 +613,8 @@ static void StreamingTest()
             }
         }
 
-        if ((unsigned)(original.PacketNum - NextExpectedPacket) >= kDelayBeforeAck &&
-            (unsigned)(original.PacketNum - NextExpectedPacket) < SIAMESE_PACKET_NUM_COUNT / 2)
+        if ((unsigned)(original.packetNum - NextExpectedPacket) >= kDelayBeforeAck &&
+            (unsigned)(original.packetNum - NextExpectedPacket) < SIAMESE_PACKET_NUM_COUNT / 2)
         {
             Logger.Trace("<<< Back-channel <<< Simulating ACK: Waiting for ", NextExpectedPacket);
 
@@ -795,8 +798,9 @@ void HARQSimulation::ClientSendNewVideoData()
     SetPacket(NextSendPacketId, newData.Data + 1 + 4, newData.Bytes);
 
     SiameseOriginalPacket original;
-    original.Data = newData.Data + 1 + 4;
-    original.DataBytes = newData.Bytes;
+    original.data = newData.Data + 1 + 4;
+    original.dataBytes = newData.Bytes;
+    original.packetNum = NextSendPacketId;
     newData.Bytes += 1 + 4;
 
     t_siamese_encoder_add.BeginCall();
@@ -809,13 +813,13 @@ void HARQSimulation::ClientSendNewVideoData()
         SIAMESE_DEBUG_BREAK();
         return;
     }
-    SIAMESE_DEBUG_ASSERT(NextSendPacketId == original.PacketNum);
+    SIAMESE_DEBUG_ASSERT(NextSendPacketId == original.packetNum);
     SIAMESE_DEBUG_ASSERT(Timestamps.size() == NextSendPacketId);
     ++NextSendPacketId;
     Timestamps.push_back(siamese::GetTimeUsec());
 
     newData.Data[0] = OpCode_Data;
-    siamese::WriteU32_LE(newData.Data + 1, original.PacketNum);
+    siamese::WriteU32_LE(newData.Data + 1, original.packetNum);
 
     c2sRound.Packets.push_back(newData);
 }
@@ -885,10 +889,10 @@ void HARQSimulation::ServerReceiveData()
                 Originals.BytesReceived += c2sPacket.Bytes - 1 - 4;
 
                 SiameseOriginalPacket original;
-                original.PacketNum = siamese::ReadU32_LE(c2sPacket.Data + 1);
-                Logger.Trace("** Got Original: ", original.PacketNum);
-                original.Data = c2sPacket.Data + 1 + 4;
-                original.DataBytes = c2sPacket.Bytes - 1 - 4;
+                original.packetNum = siamese::ReadU32_LE(c2sPacket.Data + 1);
+                Logger.Trace("** Got Original: ", original.packetNum);
+                original.data = c2sPacket.Data + 1 + 4;
+                original.dataBytes = c2sPacket.Bytes - 1 - 4;
                 ServerOnOriginal(original);
             }
             else
@@ -964,18 +968,18 @@ bool HARQSimulation::ClientRetransmitData()
 
         c2sRound.Packets.push_back(newData);
 #else
-        Logger.Trace("Retransmitted : ", original.PacketNum);
+        Logger.Trace("Retransmitted : ", original.packetNum);
 
         QueuedPacket newData;
         newData.Data[0] = OpCode_Data;
-        siamese::WriteU32_LE(newData.Data + 1, original.PacketNum);
-        memcpy(newData.Data + 1 + 4, original.Data, original.DataBytes);
-        newData.Bytes = 1 + 4 + original.DataBytes;
+        siamese::WriteU32_LE(newData.Data + 1, original.packetNum);
+        memcpy(newData.Data + 1 + 4, original.data, original.dataBytes);
+        newData.Bytes = 1 + 4 + original.dataBytes;
 
         c2sRound.Packets.push_back(newData);
 
         ++RetransmitCount;
-        RetransmitBytes += original.DataBytes;
+        RetransmitBytes += original.dataBytes;
 
         // Note: Also counts as original data sent
         Originals.Sent++;
@@ -1070,7 +1074,7 @@ void HARQSimulation::ServerResumeProcessing()
     for (;;)
     {
         SiameseOriginalPacket original;
-        original.PacketNum = NextExpectedPacket;
+        original.packetNum = NextExpectedPacket;
 
         t_siamese_decode.BeginCall();
         int getResult = siamese_decoder_get(decoder, &original);
@@ -1149,7 +1153,7 @@ void HARQSimulation::ServerOnRecovery(SiameseRecoveryPacket& recovery)
 
 void HARQSimulation::ServerSimulateProcessingOriginal(SiameseOriginalPacket& original)
 {
-    if (!CheckPacket(original.PacketNum, original.Data, original.DataBytes))
+    if (!CheckPacket(original.packetNum, original.data, original.dataBytes))
     {
         UnrecoverableError = true;
         Logger.Error("Data was corrupted");
@@ -1158,7 +1162,7 @@ void HARQSimulation::ServerSimulateProcessingOriginal(SiameseOriginalPacket& ori
     }
 
     // If this is the next packet in sequence:
-    if (original.PacketNum != NextExpectedPacket)
+    if (original.packetNum != NextExpectedPacket)
     {
         UnrecoverableError = true;
         Logger.Error("Received data out of order");
@@ -1166,8 +1170,8 @@ void HARQSimulation::ServerSimulateProcessingOriginal(SiameseOriginalPacket& ori
         return;
     }
 
-    SIAMESE_DEBUG_ASSERT(Timestamps.size() > original.PacketNum);
-    const uint64_t tsUsec = Timestamps[original.PacketNum];
+    SIAMESE_DEBUG_ASSERT(Timestamps.size() > original.packetNum);
+    const uint64_t tsUsec = Timestamps[original.packetNum];
     const uint64_t nowUsec = siamese::GetTimeUsec();
     SIAMESE_DEBUG_ASSERT(nowUsec > tsUsec);
     const unsigned deltaUsec = (unsigned)(nowUsec - tsUsec);
@@ -1175,7 +1179,7 @@ void HARQSimulation::ServerSimulateProcessingOriginal(SiameseOriginalPacket& ori
     UsecDeltas.push_back(deltaUsec);
 
     NextExpectedPacket = SIAMESE_PACKET_NUM_INC(NextExpectedPacket);
-    Logger.Trace("Received in sequence: ", original.PacketNum, " OWD = ", deltaUsec);
+    Logger.Trace("Received in sequence: ", original.packetNum, " OWD = ", deltaUsec);
 
     // Note: Do not call any decoder functions here
     // because the original packet hasn't been added yet
@@ -1184,7 +1188,7 @@ void HARQSimulation::ServerSimulateProcessingOriginal(SiameseOriginalPacket& ori
 void HARQSimulation::ServerOnOriginal(SiameseOriginalPacket& original)
 {
     // If this is the next packet in sequence:
-    if (original.PacketNum == NextExpectedPacket)
+    if (original.packetNum == NextExpectedPacket)
     {
         ServerSimulateProcessingOriginal(original);
     }
@@ -1202,7 +1206,7 @@ void HARQSimulation::ServerOnOriginal(SiameseOriginalPacket& original)
     }
     else if (result == Siamese_DuplicateData)
     {
-        Logger.Trace("Received duplicated data: ", original.PacketNum);
+        Logger.Trace("Received duplicated data: ", original.packetNum);
         ++DuplicateOriginalsReceived;
     }
     else
@@ -1599,8 +1603,9 @@ bool TestLargeBurstLoss()
             SetPacket(i, buffer, bytes);
 
             SiameseOriginalPacket original;
-            original.Data = buffer;
-            original.DataBytes = bytes;
+            original.data = buffer;
+            original.dataBytes = bytes;
+            original.packetNum = i;
             {
                 t_siamese_encoder_add.BeginCall();
                 int result = siamese_encoder_add(encoder, &original);
@@ -1679,9 +1684,9 @@ bool TestLargeBurstLoss()
             SetPacket(packetId, buffer, bytes);
 
             SiameseOriginalPacket original;
-            original.Data = buffer;
-            original.DataBytes = bytes;
-            original.PacketNum = packetId;
+            original.data = buffer;
+            original.dataBytes = bytes;
+            original.packetNum = packetId;
 
             t_siamese_decoder_add_original.BeginCall();
             int result = siamese_decoder_add_original(decoder, &original);
@@ -1720,9 +1725,9 @@ bool TestLargeBurstLoss()
                     {
                         //cout << packets[i].PacketNum << " ";
 
-                        if (!CheckPacket(packets[i].PacketNum, packets[i].Data, packets[i].DataBytes))
+                        if (!CheckPacket(packets[i].packetNum, packets[i].data, packets[i].dataBytes))
                         {
-                            Logger.Error("Packet check failed for ", i, ".DataBytes = ", packets[i].DataBytes);
+                            Logger.Error("Packet check failed for ", i, ".DataBytes = ", packets[i].dataBytes);
                             SIAMESE_DEBUG_BREAK();
                             return false;
                         }

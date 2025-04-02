@@ -1,21 +1,26 @@
 #pragma once
 #include <cstdint>
 
+#ifndef SIAMESE_TYPES_H
+#define SIAMESE_TYPES_H
+
 #define SIAMESE_PACKET_NUM_MAX 0x3FFFFF
 #define SIAMESE_MAX_RECOVERY_PACKETS 256
 
 typedef int SiameseResult;
 
 struct SiameseOriginalPacket {
-    uint32_t PacketNum;
-    void* Data;
-    unsigned DataBytes;
+    const uint8_t* data;
+    unsigned dataBytes;
+    unsigned packetNum;
 };
 
 struct SiameseRecoveryPacket {
-    void* Data;
-    unsigned DataBytes;
+    const uint8_t* data;
+    unsigned dataBytes;
 };
 
 typedef void* SiameseEncoder;
 typedef void* SiameseDecoder;
+
+#endif // SIAMESE_TYPES_H

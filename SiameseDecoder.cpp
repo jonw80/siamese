@@ -69,6 +69,14 @@ Decoder::Decoder()
     CheckedRegion.RecoveryMatrix  = &RecoveryMatrix;
 }
 
+void Decoder::SomeFunction() noexcept
+{
+    // Fix undeclared identifiers
+    siamese::DecoderStats stats;
+    siamese::RecoveryPackets recoveryPackets;
+    siamese::TheAllocator allocator;
+}
+
 SiameseResult Decoder::Get(SiameseOriginalPacket& packetOut)
 {
     // Note: Keep this in sync with Encoder::Get
