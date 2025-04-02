@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o"
   "CMakeFiles/unit_test.dir/logger.cpp.o"
   "CMakeFiles/unit_test.dir/siamese.cpp.o"
+  "CMakeFiles/unit_test.dir/unit_test/main.cpp.o"
   "unit_test"
   "unit_test.pdb"
 )

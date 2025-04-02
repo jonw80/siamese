@@ -99,7 +99,14 @@ set(SOURCES
     # Add other source files as needed
 )
 
-add_executable(unit_test ${SOURCES})
+add_executable(unit_test
+    siamese.cpp
+    SiameseEncoder.cpp
+    SiameseDecoder.cpp
+    Logger.cpp
+    logger.cpp
+    unit_test/main.cpp
+)
 target_include_directories(unit_test PRIVATE ${CMAKE_SOURCE_DIR})
 target_link_libraries(unit_test Threads::Threads)
 install(TARGETS unit_test DESTINATION bin)

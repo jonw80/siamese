@@ -332,6 +332,33 @@ siamese.cpp.s:
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/siamese.cpp.s
 .PHONY : siamese.cpp.s
 
+unit_test/main.o: unit_test/main.cpp.o
+
+.PHONY : unit_test/main.o
+
+# target to build an object file
+unit_test/main.cpp.o:
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test/main.cpp.o
+.PHONY : unit_test/main.cpp.o
+
+unit_test/main.i: unit_test/main.cpp.i
+
+.PHONY : unit_test/main.i
+
+# target to preprocess a source file
+unit_test/main.cpp.i:
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test/main.cpp.i
+.PHONY : unit_test/main.cpp.i
+
+unit_test/main.s: unit_test/main.cpp.s
+
+.PHONY : unit_test/main.s
+
+# target to generate assembly for a file
+unit_test/main.cpp.s:
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test/main.cpp.s
+.PHONY : unit_test/main.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -361,6 +388,9 @@ help:
 	@echo "... siamese.o"
 	@echo "... siamese.i"
 	@echo "... siamese.s"
+	@echo "... unit_test/main.o"
+	@echo "... unit_test/main.i"
+	@echo "... unit_test/main.s"
 .PHONY : help
 
 

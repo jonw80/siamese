@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/workspaces/siamese/SiameseEncoder.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o"
   "/workspaces/siamese/logger.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/logger.cpp.o"
   "/workspaces/siamese/siamese.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/siamese.cpp.o"
+  "/workspaces/siamese/unit_test/main.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/unit_test/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 

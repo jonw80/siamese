@@ -48,5 +48,10 @@
   "directory": "/workspaces/siamese/build",
   "command": "/usr/bin/clang++   -I/workspaces/siamese   -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/logger.cpp.o -c /workspaces/siamese/logger.cpp",
   "file": "/workspaces/siamese/logger.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++   -I/workspaces/siamese   -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/unit_test/main.cpp.o -c /workspaces/siamese/unit_test/main.cpp",
+  "file": "/workspaces/siamese/unit_test/main.cpp"
 }
 ]
