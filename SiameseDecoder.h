@@ -8,6 +8,7 @@
 #include "DecoderPacketWindow.h" // For DecoderPacketWindow
 #include "CheckedRegionState.h" // For CheckedRegionState
 #include "RecoveryMatrixState.h" // For RecoveryMatrixState
+#include "DecoderStats.h" // Include the correct header for DecoderStats
 
 namespace siamese {
 
@@ -24,10 +25,6 @@ enum {
     SiameseDecoderStats_SolveSuccessCount,
     SiameseDecoderStats_MemoryUsed,
     SiameseDecoderStats_Count
-};
-
-struct DecoderStats {
-    uint64_t Counts[SiameseDecoderStats_Count];
 };
 
 class Decoder {

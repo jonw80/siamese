@@ -23,8 +23,6 @@ RecoveryMatrixState.h
 /workspaces/siamese/DecoderStats.h
 
 /workspaces/siamese/RecoveryMatrixState.h
-DecoderPacketWindow.h
-/workspaces/siamese/DecoderPacketWindow.h
 
 /workspaces/siamese/RecoveryPacketList.h
 cstdint
