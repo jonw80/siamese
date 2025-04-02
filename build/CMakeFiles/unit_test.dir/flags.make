@@ -6,5 +6,5 @@ CXX_FLAGS =  -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -ma
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/workspaces/siamese 
 

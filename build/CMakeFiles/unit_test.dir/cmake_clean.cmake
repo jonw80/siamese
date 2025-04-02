@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/unit_test.dir/gf256.cpp.o"
   "CMakeFiles/unit_test.dir/siamese.cpp.o"
+  "CMakeFiles/unit_test.dir/unit_test.cpp.o"
   "unit_test"
   "unit_test.pdb"
 )

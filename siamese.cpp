@@ -85,3 +85,29 @@ SiameseResult siamese_encoder_get_statistics(SiameseEncoder encoder, uint64_t* s
 // Decoder functions are implemented in SiameseDecoder.cpp
 
 } // extern "C"
+
+namespace siamese {
+
+Encoder::Encoder() {
+    // Constructor implementation
+}
+
+void Encoder::Add(SiameseOriginalPacket& packet) {
+    // Add implementation
+}
+
+void Encoder::Retransmit(SiameseOriginalPacket& packet) {
+    // Retransmit implementation
+}
+
+bool Encoder::GetRecoveryPacket(unsigned int id, unsigned char* buffer, unsigned int bufferSize, unsigned int& bytesWritten) {
+    // GetRecoveryPacket implementation
+    return true;
+}
+
+bool Encoder::Acknowledge(const unsigned char* data, unsigned int length, unsigned int& ackedBytes) {
+    // Acknowledge implementation
+    return true;
+}
+
+} // namespace siamese

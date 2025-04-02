@@ -6,10 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/workspaces/siamese/Encoder.cpp
-Encoder.h
-/workspaces/siamese/Encoder.h
-
 /workspaces/siamese/gf256.cpp
 gf256.h
 /workspaces/siamese/gf256.h

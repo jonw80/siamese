@@ -11,7 +11,17 @@
 },
 {
   "directory": "/workspaces/siamese/build",
-  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/siamese.cpp.o -c /workspaces/siamese/siamese.cpp",
+  "command": "/usr/bin/clang++   -I/workspaces/siamese   -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/unit_test.cpp.o -c /workspaces/siamese/unit_test.cpp",
+  "file": "/workspaces/siamese/unit_test.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++   -I/workspaces/siamese   -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/siamese.cpp.o -c /workspaces/siamese/siamese.cpp",
   "file": "/workspaces/siamese/siamese.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++   -I/workspaces/siamese   -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/gf256.cpp.o -c /workspaces/siamese/gf256.cpp",
+  "file": "/workspaces/siamese/gf256.cpp"
 }
 ]

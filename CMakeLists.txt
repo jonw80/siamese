@@ -100,13 +100,8 @@ set(SOURCE_FILES
 
 # Application
 
-set(SOURCES
-    siamese.cpp
-    gf256_arm64.s
-    # Add other source files here
-)
-
-add_executable(unit_test ${SOURCES})
+add_executable(unit_test unit_test.cpp siamese.cpp gf256.cpp)
+target_include_directories(unit_test PRIVATE ${CMAKE_SOURCE_DIR})
 target_link_libraries(unit_test
     Threads::Threads
 )

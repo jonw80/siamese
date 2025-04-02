@@ -216,6 +216,7 @@ gf256.o: gf256.cpp.o
 # target to build an object file
 gf256.cpp.o:
 	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.o
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.o
 .PHONY : gf256.cpp.o
 
 gf256.i: gf256.cpp.i
@@ -225,6 +226,7 @@ gf256.i: gf256.cpp.i
 # target to preprocess a source file
 gf256.cpp.i:
 	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.i
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.i
 .PHONY : gf256.cpp.i
 
 gf256.s: gf256.cpp.s
@@ -234,6 +236,7 @@ gf256.s: gf256.cpp.s
 # target to generate assembly for a file
 gf256.cpp.s:
 	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.s
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.s
 .PHONY : gf256.cpp.s
 
 siamese.o: siamese.cpp.o
@@ -263,6 +266,33 @@ siamese.cpp.s:
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/siamese.cpp.s
 .PHONY : siamese.cpp.s
 
+unit_test.o: unit_test.cpp.o
+
+.PHONY : unit_test.o
+
+# target to build an object file
+unit_test.cpp.o:
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test.cpp.o
+.PHONY : unit_test.cpp.o
+
+unit_test.i: unit_test.cpp.i
+
+.PHONY : unit_test.i
+
+# target to preprocess a source file
+unit_test.cpp.i:
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test.cpp.i
+.PHONY : unit_test.cpp.i
+
+unit_test.s: unit_test.cpp.s
+
+.PHONY : unit_test.s
+
+# target to generate assembly for a file
+unit_test.cpp.s:
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test.cpp.s
+.PHONY : unit_test.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -286,6 +316,9 @@ help:
 	@echo "... siamese.o"
 	@echo "... siamese.i"
 	@echo "... siamese.s"
+	@echo "... unit_test.o"
+	@echo "... unit_test.i"
+	@echo "... unit_test.s"
 .PHONY : help
 
 
