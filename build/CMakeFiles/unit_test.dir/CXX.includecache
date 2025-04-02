@@ -79,6 +79,16 @@ stdint.h
 -
 SiameseTypes.h
 /workspaces/siamese/SiameseTypes.h
+pktalloc.h
+/workspaces/siamese/pktalloc.h
+RecoveryPacketList.h
+/workspaces/siamese/RecoveryPacketList.h
+DecoderPacketWindow.h
+/workspaces/siamese/DecoderPacketWindow.h
+CheckedRegionState.h
+/workspaces/siamese/CheckedRegionState.h
+RecoveryMatrixState.h
+/workspaces/siamese/RecoveryMatrixState.h
 
 /workspaces/siamese/SiameseEncoder.h
 SiameseTypes.h
