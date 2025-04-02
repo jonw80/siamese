@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>  // For standard types like uint64_t
+#include "SiameseResult.h" // Include SiameseResult
 
 typedef struct SiameseOriginalPacket {
     const uint8_t* data;
@@ -38,7 +39,7 @@ typedef void* SiameseDecoder;
 int siamese_encoder_add(SiameseEncoder encoder, const SiameseOriginalPacket* packet);
 int siamese_encoder_retransmit(SiameseEncoder encoder, const SiameseOriginalPacket* packet);
 int siamese_encoder_get_statistics(SiameseEncoder encoder, uint64_t* statsOut, unsigned statsCount);
-SiameseResult siamese_encoder_get_recovery(SiameseEncoder encoder, unsigned id, uint8_t* data, unsigned maxBytes, unsigned* usedBytesOut); // Updated return type
+siamese::SiameseResult siamese_encoder_get_recovery(SiameseEncoder encoder, unsigned id, uint8_t* data, unsigned maxBytes, unsigned* usedBytesOut); // Qualified return type
 void siamese_encoder_free(SiameseEncoder encoder);
 
 int siamese_decoder_add_original(SiameseDecoder decoder, const SiameseOriginalPacket* packet);
