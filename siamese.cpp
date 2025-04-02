@@ -9,8 +9,7 @@ extern "C" {
 
 // Siamese library initialization
 int siamese_init() {
-    // Initialize GF256 library
-    return gf256_init();
+    return gf256_init_(); // Ensure the correct GF256 initialization function is called
 }
 
 // Encoder functions
@@ -45,12 +44,10 @@ SiameseResult siamese_encode(SiameseEncoder encoder, SiameseRecoveryPacket* reco
         return Siamese_NeedMoreData;
     }
 
-    unsigned usedBytes = 0; // Declare a variable for the missing argument
-    unsigned maxBytes = recoveryOut->dataBytes; // Declare maxBytes based on recoveryOut->dataBytes
-    uint8_t* dataBuffer = const_cast<uint8_t*>(recoveryOut->data); // Use const_cast to remove const qualifier
-    return static_cast<Encoder*>(encoder)->GetRecoveryPacket(
-        0, // Default recovery ID
-        dataBuffer, maxBytes, usedBytes); // Pass the correct arguments
+    unsigned usedBytes = 0;
+    unsigned maxBytes = recoveryOut->dataBytes;
+    uint8_t* dataBuffer = const_cast<uint8_t*>(recoveryOut->data);
+    return static_cast<Encoder*>(encoder)->GetRecoveryPacket(0, dataBuffer, maxBytes, usedBytes);
 }
 
 SiameseResult siamese_encoder_get_recovery(SiameseEncoder encoder, unsigned id, uint8_t* data, unsigned maxBytes, unsigned* usedBytesOut) {
@@ -74,15 +71,12 @@ SiameseResult siamese_encoder_get_statistics(SiameseEncoder encoder, uint64_t* s
         return Siamese_NeedMoreData;
     }
 
-    // Placeholder for actual statistics gathering
     for (unsigned i = 0; i < statsCount; ++i) {
         statsOut[i] = 0;
     }
 
     return Siamese_Success;
 }
-
-// Decoder functions are implemented in SiameseDecoder.cpp
 
 } // extern "C"
 
@@ -92,22 +86,30 @@ Encoder::Encoder() {
     // Constructor implementation
 }
 
-void Encoder::Add(SiameseOriginalPacket& packet) {
+Encoder::~Encoder() {
+    // Destructor implementation
+}
+
+SiameseResult Encoder::Add(SiameseOriginalPacket& packet) {
     // Add implementation
+    return Siamese_Success;
 }
 
-void Encoder::Retransmit(SiameseOriginalPacket& packet) {
+SiameseResult Encoder::Retransmit(SiameseOriginalPacket& packet) {
     // Retransmit implementation
+    return Siamese_Success;
 }
 
-bool Encoder::GetRecoveryPacket(unsigned int id, unsigned char* buffer, unsigned int bufferSize, unsigned int& bytesWritten) {
+SiameseResult Encoder::GetRecoveryPacket(unsigned id, uint8_t* data, unsigned maxBytes, unsigned& usedBytes) {
     // GetRecoveryPacket implementation
-    return true;
+    usedBytes = 0; // Example: Set usedBytes to 0
+    return Siamese_Success;
 }
 
-bool Encoder::Acknowledge(const unsigned char* data, unsigned int length, unsigned int& ackedBytes) {
+SiameseResult Encoder::Acknowledge(const uint8_t* data, unsigned bytes, unsigned& outAcked) {
     // Acknowledge implementation
-    return true;
+    outAcked = 0; // Example: Set outAcked to 0
+    return Siamese_Success;
 }
 
 } // namespace siamese

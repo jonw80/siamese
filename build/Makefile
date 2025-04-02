@@ -182,32 +182,65 @@ unit_test/fast:
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/build
 .PHONY : unit_test/fast
 
-Encoder.o: Encoder.cpp.o
+SiameseDecoder.o: SiameseDecoder.cpp.o
 
-.PHONY : Encoder.o
+.PHONY : SiameseDecoder.o
 
 # target to build an object file
-Encoder.cpp.o:
-	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Encoder.cpp.o
-.PHONY : Encoder.cpp.o
+SiameseDecoder.cpp.o:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/SiameseDecoder.cpp.o
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o
+.PHONY : SiameseDecoder.cpp.o
 
-Encoder.i: Encoder.cpp.i
+SiameseDecoder.i: SiameseDecoder.cpp.i
 
-.PHONY : Encoder.i
+.PHONY : SiameseDecoder.i
 
 # target to preprocess a source file
-Encoder.cpp.i:
-	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Encoder.cpp.i
-.PHONY : Encoder.cpp.i
+SiameseDecoder.cpp.i:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/SiameseDecoder.cpp.i
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/SiameseDecoder.cpp.i
+.PHONY : SiameseDecoder.cpp.i
 
-Encoder.s: Encoder.cpp.s
+SiameseDecoder.s: SiameseDecoder.cpp.s
 
-.PHONY : Encoder.s
+.PHONY : SiameseDecoder.s
 
 # target to generate assembly for a file
-Encoder.cpp.s:
-	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Encoder.cpp.s
-.PHONY : Encoder.cpp.s
+SiameseDecoder.cpp.s:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/SiameseDecoder.cpp.s
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/SiameseDecoder.cpp.s
+.PHONY : SiameseDecoder.cpp.s
+
+SiameseEncoder.o: SiameseEncoder.cpp.o
+
+.PHONY : SiameseEncoder.o
+
+# target to build an object file
+SiameseEncoder.cpp.o:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/SiameseEncoder.cpp.o
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o
+.PHONY : SiameseEncoder.cpp.o
+
+SiameseEncoder.i: SiameseEncoder.cpp.i
+
+.PHONY : SiameseEncoder.i
+
+# target to preprocess a source file
+SiameseEncoder.cpp.i:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/SiameseEncoder.cpp.i
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/SiameseEncoder.cpp.i
+.PHONY : SiameseEncoder.cpp.i
+
+SiameseEncoder.s: SiameseEncoder.cpp.s
+
+.PHONY : SiameseEncoder.s
+
+# target to generate assembly for a file
+SiameseEncoder.cpp.s:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/SiameseEncoder.cpp.s
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/SiameseEncoder.cpp.s
+.PHONY : SiameseEncoder.cpp.s
 
 gf256.o: gf256.cpp.o
 
@@ -245,6 +278,7 @@ siamese.o: siamese.cpp.o
 
 # target to build an object file
 siamese.cpp.o:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/siamese.cpp.o
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/siamese.cpp.o
 .PHONY : siamese.cpp.o
 
@@ -254,6 +288,7 @@ siamese.i: siamese.cpp.i
 
 # target to preprocess a source file
 siamese.cpp.i:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/siamese.cpp.i
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/siamese.cpp.i
 .PHONY : siamese.cpp.i
 
@@ -263,6 +298,7 @@ siamese.s: siamese.cpp.s
 
 # target to generate assembly for a file
 siamese.cpp.s:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/siamese.cpp.s
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/siamese.cpp.s
 .PHONY : siamese.cpp.s
 
@@ -307,9 +343,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... siamese"
 	@echo "... unit_test"
-	@echo "... Encoder.o"
-	@echo "... Encoder.i"
-	@echo "... Encoder.s"
+	@echo "... SiameseDecoder.o"
+	@echo "... SiameseDecoder.i"
+	@echo "... SiameseDecoder.s"
+	@echo "... SiameseEncoder.o"
+	@echo "... SiameseEncoder.i"
+	@echo "... SiameseEncoder.s"
 	@echo "... gf256.o"
 	@echo "... gf256.i"
 	@echo "... gf256.s"

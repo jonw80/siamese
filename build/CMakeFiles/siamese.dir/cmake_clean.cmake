@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/siamese.dir/Encoder.cpp.o"
+  "CMakeFiles/siamese.dir/SiameseDecoder.cpp.o"
+  "CMakeFiles/siamese.dir/SiameseEncoder.cpp.o"
   "CMakeFiles/siamese.dir/gf256.cpp.o"
+  "CMakeFiles/siamese.dir/siamese.cpp.o"
   "libsiamese.a"
   "libsiamese.pdb"
 )

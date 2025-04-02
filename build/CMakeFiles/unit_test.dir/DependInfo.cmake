@@ -4,6 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/workspaces/siamese/SiameseDecoder.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o"
+  "/workspaces/siamese/SiameseEncoder.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o"
   "/workspaces/siamese/gf256.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/gf256.cpp.o"
   "/workspaces/siamese/siamese.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/siamese.cpp.o"
   "/workspaces/siamese/unit_test.cpp" "/workspaces/siamese/build/CMakeFiles/unit_test.dir/unit_test.cpp.o"

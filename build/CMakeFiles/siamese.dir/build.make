@@ -57,22 +57,35 @@ include CMakeFiles/siamese.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/siamese.dir/flags.make
 
-CMakeFiles/siamese.dir/Encoder.cpp.o: CMakeFiles/siamese.dir/flags.make
-CMakeFiles/siamese.dir/Encoder.cpp.o: ../Encoder.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/siamese.dir/Encoder.cpp.o"
-	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/siamese.dir/Encoder.cpp.o -c /workspaces/siamese/Encoder.cpp
+CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: CMakeFiles/siamese.dir/flags.make
+CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/siamese.dir/SiameseEncoder.cpp.o"
+	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/siamese.dir/SiameseEncoder.cpp.o -c /workspaces/siamese/SiameseEncoder.cpp
 
-CMakeFiles/siamese.dir/Encoder.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/siamese.dir/Encoder.cpp.i"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/Encoder.cpp > CMakeFiles/siamese.dir/Encoder.cpp.i
+CMakeFiles/siamese.dir/SiameseEncoder.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/siamese.dir/SiameseEncoder.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/SiameseEncoder.cpp > CMakeFiles/siamese.dir/SiameseEncoder.cpp.i
 
-CMakeFiles/siamese.dir/Encoder.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/siamese.dir/Encoder.cpp.s"
-	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/Encoder.cpp -o CMakeFiles/siamese.dir/Encoder.cpp.s
+CMakeFiles/siamese.dir/SiameseEncoder.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/siamese.dir/SiameseEncoder.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/SiameseEncoder.cpp -o CMakeFiles/siamese.dir/SiameseEncoder.cpp.s
+
+CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: CMakeFiles/siamese.dir/flags.make
+CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../SiameseDecoder.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/siamese.dir/SiameseDecoder.cpp.o"
+	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/siamese.dir/SiameseDecoder.cpp.o -c /workspaces/siamese/SiameseDecoder.cpp
+
+CMakeFiles/siamese.dir/SiameseDecoder.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/siamese.dir/SiameseDecoder.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/SiameseDecoder.cpp > CMakeFiles/siamese.dir/SiameseDecoder.cpp.i
+
+CMakeFiles/siamese.dir/SiameseDecoder.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/siamese.dir/SiameseDecoder.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/SiameseDecoder.cpp -o CMakeFiles/siamese.dir/SiameseDecoder.cpp.s
 
 CMakeFiles/siamese.dir/gf256.cpp.o: CMakeFiles/siamese.dir/flags.make
 CMakeFiles/siamese.dir/gf256.cpp.o: ../gf256.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/siamese.dir/gf256.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/siamese.dir/gf256.cpp.o"
 	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/siamese.dir/gf256.cpp.o -c /workspaces/siamese/gf256.cpp
 
 CMakeFiles/siamese.dir/gf256.cpp.i: cmake_force
@@ -83,19 +96,36 @@ CMakeFiles/siamese.dir/gf256.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/siamese.dir/gf256.cpp.s"
 	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/gf256.cpp -o CMakeFiles/siamese.dir/gf256.cpp.s
 
+CMakeFiles/siamese.dir/siamese.cpp.o: CMakeFiles/siamese.dir/flags.make
+CMakeFiles/siamese.dir/siamese.cpp.o: ../siamese.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/siamese.dir/siamese.cpp.o"
+	/usr/bin/clang++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/siamese.dir/siamese.cpp.o -c /workspaces/siamese/siamese.cpp
+
+CMakeFiles/siamese.dir/siamese.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/siamese.dir/siamese.cpp.i"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/siamese/siamese.cpp > CMakeFiles/siamese.dir/siamese.cpp.i
+
+CMakeFiles/siamese.dir/siamese.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/siamese.dir/siamese.cpp.s"
+	/usr/bin/clang++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/siamese/siamese.cpp -o CMakeFiles/siamese.dir/siamese.cpp.s
+
 # Object files for target siamese
 siamese_OBJECTS = \
-"CMakeFiles/siamese.dir/Encoder.cpp.o" \
-"CMakeFiles/siamese.dir/gf256.cpp.o"
+"CMakeFiles/siamese.dir/SiameseEncoder.cpp.o" \
+"CMakeFiles/siamese.dir/SiameseDecoder.cpp.o" \
+"CMakeFiles/siamese.dir/gf256.cpp.o" \
+"CMakeFiles/siamese.dir/siamese.cpp.o"
 
 # External object files for target siamese
 siamese_EXTERNAL_OBJECTS =
 
-libsiamese.a: CMakeFiles/siamese.dir/Encoder.cpp.o
+libsiamese.a: CMakeFiles/siamese.dir/SiameseEncoder.cpp.o
+libsiamese.a: CMakeFiles/siamese.dir/SiameseDecoder.cpp.o
 libsiamese.a: CMakeFiles/siamese.dir/gf256.cpp.o
+libsiamese.a: CMakeFiles/siamese.dir/siamese.cpp.o
 libsiamese.a: CMakeFiles/siamese.dir/build.make
 libsiamese.a: CMakeFiles/siamese.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libsiamese.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspaces/siamese/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX static library libsiamese.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/siamese.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/siamese.dir/link.txt --verbose=$(VERBOSE)
 

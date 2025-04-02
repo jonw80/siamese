@@ -100,15 +100,21 @@ set(SOURCE_FILES
 
 # Application
 
-add_executable(unit_test unit_test.cpp siamese.cpp gf256.cpp)
-target_include_directories(unit_test PRIVATE ${CMAKE_SOURCE_DIR})
-target_link_libraries(unit_test
-    Threads::Threads
+add_executable(unit_test
+    unit_test.cpp
+    siamese.cpp
+    SiameseEncoder.cpp
+    SiameseDecoder.cpp
+    gf256.cpp
 )
+target_include_directories(unit_test PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(unit_test Threads::Threads)
 install(TARGETS unit_test DESTINATION bin)
 
 add_library(siamese
-    Encoder.cpp
+    SiameseEncoder.cpp
+    SiameseDecoder.cpp
     gf256.cpp
-    # ...other source files...
+    siamese.cpp
+    # Add other source files as needed
 )
