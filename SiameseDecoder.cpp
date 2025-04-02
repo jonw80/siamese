@@ -34,6 +34,7 @@
 #include "SiameseConstants.h"  // for the packet limits
 #include "DecoderPacketWindow.h" // For DecoderPacketWindow
 #include "SiameseResult.h" // For SiameseResult
+#include "SiameseCommon.h" // Include OriginalPacket
 
 namespace siamese {
 

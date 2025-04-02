@@ -29,6 +29,11 @@
 
 #pragma once
 
+#ifndef SIAMESE_COMMON_H
+#define SIAMESE_COMMON_H
+
+#include <cstdint>
+
 /**
     This module provides core tools and constants used by the codec:
 
@@ -366,5 +371,13 @@ struct RecoveryMetadata
     */
 };
 
+struct OriginalPacket {
+    struct {
+        const uint8_t* data;
+        unsigned length;
+    } Buffer;
+};
 
 } // namespace siamese
+
+#endif // SIAMESE_COMMON_H

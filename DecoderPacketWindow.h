@@ -6,6 +6,8 @@
 #include "RecoveryPacketList.h" // Include RecoveryPacketList
 #include "RecoveryMatrixState.h" // Include RecoveryMatrixState
 #include "SiameseResult.h" // For SiameseResult
+#include "DecoderStats.h" // Include DecoderStats
+#include "SiameseCommon.h" // Include OriginalPacket
 
 namespace siamese {
 
