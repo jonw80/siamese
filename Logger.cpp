@@ -48,11 +48,6 @@ const char* LevelNames[(int)Level::Count] = {
     "Trace", "Debug", "Info", "Warning", "Error", "Silent", "Off"
 };
 
-// Update the level characters array
-const char LevelChars[(int)Level::Count] = {
-    't', 'd', 'I', 'W', '!', '?', 'O'
-};
-
 // Ensure static_assert matches the number of levels
 static_assert((int)Level::Count == 7, "Update this switch");
 

@@ -20,6 +20,6 @@ static const char kLevelChars[(int)Level::Count] = {
 };
 
 // Ensure the arrays match the Level enum
-static_assert((int)Level::Count == 5, "Update this switch");
+static_assert((int)Level::Count == 7, "Update this switch");
 
 } // namespace logger
