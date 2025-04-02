@@ -45,9 +45,9 @@ SiameseResult siamese_encode(SiameseEncoder encoder, SiameseRecoveryPacket* reco
         return Siamese_NeedMoreData;
     }
 
+    unsigned usedBytes = 0; // Declare a variable for the missing argument
     return static_cast<Encoder*>(encoder)->GetRecoveryPacket(
         0, // Default recovery ID
-        const_cast<uint8_t*>(recoveryOut->data),
         recoveryOut->dataBytes);
 }
 

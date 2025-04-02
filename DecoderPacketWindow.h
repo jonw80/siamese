@@ -4,6 +4,7 @@
 #include <vector>
 #include "SiameseTypes.h"
 #include "SiameseDecoder.h" // Ensure DecoderStats and CheckedRegionState are included
+#include "DecoderStats.h" // Include the header for DecoderStats
 #include "RecoveryMatrixState.h" // Ensure RecoveryMatrixState is included
 
 namespace siamese {
