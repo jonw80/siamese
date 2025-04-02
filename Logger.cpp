@@ -43,30 +43,45 @@
 
 namespace logger {
 
+enum class Level {
+    Trace,
+    Debug,
+    Info,
+    Warning,
+    Error,
+    Silent,
+    Count // Ensure this matches the number of levels above
+};
+
+// Update the level names array
+const char* LevelNames[(int)Level::Count] = {
+    "Trace", "Debug", "Info", "Warning", "Error", "Silent"
+};
+
+// Update the level characters array
+const char LevelChars[(int)Level::Count] = {
+    't', 'd', 'I', 'W', '!', '?'
+};
+
+// Ensure static_assert matches the number of levels
+static_assert((int)Level::Count == 6, "Update this switch");
+
 
 //------------------------------------------------------------------------------
 // Level
-
-static const char* kLevelStrings[(int)Level::Count] = {
-    "Trace", "Debug", "Info", "Warning", "Error", "Silent"
-};
 
 const char* LevelToString(Level level)
 {
     static_assert((int)Level::Count == 6, "Update this switch");
     LOGGER_DEBUG_ASSERT((int)level >= 0 && level < Level::Count);
-    return kLevelStrings[(int)level];
+    return LevelNames[(int)level];
 }
-
-static const char kLevelChars[(int)Level::Count] = {
-    't', 'd', 'I', 'W', '!', '?'
-};
 
 char LevelToChar(Level level)
 {
     static_assert((int)Level::Count == 6, "Update this switch");
     LOGGER_DEBUG_ASSERT((int)level >= 0 && level < Level::Count);
-    return kLevelChars[(int)level];
+    return LevelChars[(int)level];
 }
 
 
