@@ -15,7 +15,8 @@
 					"source" : ".",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
@@ -30,12 +31,20 @@
 					"name" : "siamese",
 					"targetIndexes" : 
 					[
-						0
+						0,
+						1
 					]
 				}
 			],
 			"targets" : 
 			[
+				{
+					"directoryIndex" : 0,
+					"id" : "siamese::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-siamese-Debug-66035e0f6a620cb8d1dc.json",
+					"name" : "siamese",
+					"projectIndex" : 0
+				},
 				{
 					"directoryIndex" : 0,
 					"id" : "unit_test::@6890427a1f51a3e7e1df",

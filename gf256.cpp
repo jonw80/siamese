@@ -646,6 +646,10 @@ extern "C" int gf256_init_(int version)
     return 0;
 }
 
+void gf256_init_() {
+    // Initialize GF(256) arithmetic tables
+}
+
 
 //------------------------------------------------------------------------------
 // Operations

@@ -157,6 +157,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named siamese
+
+# Build rule for target.
+siamese: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 siamese
+.PHONY : siamese
+
+# fast build rule for target.
+siamese/fast:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/build
+.PHONY : siamese/fast
+
+#=============================================================================
 # Target rules for targets named unit_test
 
 # Build rule for target.
@@ -168,6 +181,60 @@ unit_test: cmake_check_build_system
 unit_test/fast:
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/build
 .PHONY : unit_test/fast
+
+Encoder.o: Encoder.cpp.o
+
+.PHONY : Encoder.o
+
+# target to build an object file
+Encoder.cpp.o:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Encoder.cpp.o
+.PHONY : Encoder.cpp.o
+
+Encoder.i: Encoder.cpp.i
+
+.PHONY : Encoder.i
+
+# target to preprocess a source file
+Encoder.cpp.i:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Encoder.cpp.i
+.PHONY : Encoder.cpp.i
+
+Encoder.s: Encoder.cpp.s
+
+.PHONY : Encoder.s
+
+# target to generate assembly for a file
+Encoder.cpp.s:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Encoder.cpp.s
+.PHONY : Encoder.cpp.s
+
+gf256.o: gf256.cpp.o
+
+.PHONY : gf256.o
+
+# target to build an object file
+gf256.cpp.o:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.o
+.PHONY : gf256.cpp.o
+
+gf256.i: gf256.cpp.i
+
+.PHONY : gf256.i
+
+# target to preprocess a source file
+gf256.cpp.i:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.i
+.PHONY : gf256.cpp.i
+
+gf256.s: gf256.cpp.s
+
+.PHONY : gf256.s
+
+# target to generate assembly for a file
+gf256.cpp.s:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.s
+.PHONY : gf256.cpp.s
 
 siamese.o: siamese.cpp.o
 
@@ -208,7 +275,14 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
+	@echo "... siamese"
 	@echo "... unit_test"
+	@echo "... Encoder.o"
+	@echo "... Encoder.i"
+	@echo "... Encoder.s"
+	@echo "... gf256.o"
+	@echo "... gf256.i"
+	@echo "... gf256.s"
 	@echo "... siamese.o"
 	@echo "... siamese.i"
 	@echo "... siamese.s"

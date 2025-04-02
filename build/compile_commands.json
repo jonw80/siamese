@@ -1,6 +1,16 @@
 [
 {
   "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -std=gnu++14 -o CMakeFiles/siamese.dir/Encoder.cpp.o -c /workspaces/siamese/Encoder.cpp",
+  "file": "/workspaces/siamese/Encoder.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -std=gnu++14 -o CMakeFiles/siamese.dir/gf256.cpp.o -c /workspaces/siamese/gf256.cpp",
+  "file": "/workspaces/siamese/gf256.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
   "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/siamese.cpp.o -c /workspaces/siamese/siamese.cpp",
   "file": "/workspaces/siamese/siamese.cpp"
 }

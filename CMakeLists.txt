@@ -110,3 +110,9 @@ target_link_libraries(unit_test
     Threads::Threads
 )
 install(TARGETS unit_test DESTINATION bin)
+
+add_library(siamese
+    Encoder.cpp
+    gf256.cpp
+    # ...other source files...
+)
