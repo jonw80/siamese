@@ -45,16 +45,6 @@ namespace siamese {
 
 
 //------------------------------------------------------------------------------
-// DecoderStats
-
-DecoderStats::DecoderStats() noexcept {
-    for (unsigned i = 0; i < 10; ++i) {
-        Counts[i] = 0;
-    }
-}
-
-
-//------------------------------------------------------------------------------
 // Decoder
 
 Decoder::Decoder() noexcept {

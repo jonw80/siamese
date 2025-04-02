@@ -3,9 +3,15 @@
 
 namespace siamese {
 
-struct DecoderStats { // Changed from class to struct to match usage
-    void Reset() {}
-    void Log() const {}
+class DecoderStats {
+public:
+    unsigned Counts[10] = {0}; // Initialize the array
+
+    DecoderStats() noexcept {
+        for (unsigned i = 0; i < 10; ++i) {
+            Counts[i] = 0;
+        }
+    }
 };
 
 } // namespace siamese

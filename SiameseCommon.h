@@ -336,28 +336,6 @@ struct GrowingAlignedByteMatrix
 
 
 //------------------------------------------------------------------------------
-// OriginalPacket
-
-/// Original packet
-struct OriginalPacket
-{
-    /// Original packet data, prefixed with length field
-    GrowingAlignedDataBuffer Buffer;
-
-    /// Keep track of the column index for this packet
-    unsigned Column = 0;
-
-    /// Keep track of the number of bytes for header on the packet data
-    unsigned HeaderBytes = 0;
-
-
-    /// Write data to buffer with length prefix and initialize other members
-    /// Returns the number of bytes overhead, or 0 on out-of-memory error
-    unsigned Initialize(pktalloc::Allocator* allocator, const SiameseOriginalPacket& packet);
-};
-
-
-//------------------------------------------------------------------------------
 // Recovery Metadata
 
 /// Metadata header attached to each recovery packet

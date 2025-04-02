@@ -2,20 +2,12 @@
 #define DECODER_PACKET_WINDOW_H
 
 #include <vector>
-#include "SiameseTypes.h"
-#include "SiameseDecoder.h" // Ensure DecoderStats and CheckedRegionState are included
-#include "DecoderStats.h" // Include the header for DecoderStats
-#include "RecoveryMatrixState.h" // Ensure RecoveryMatrixState is included
+#include "pktalloc.h" // Include pktalloc for Allocator
+#include "RecoveryPacketList.h" // Include RecoveryPacketList
+#include "RecoveryMatrixState.h" // Include RecoveryMatrixState
 #include "SiameseResult.h" // For SiameseResult
 
 namespace siamese {
-
-struct OriginalPacket {
-    struct {
-        const uint8_t* data;
-        unsigned length;
-    } Buffer;
-};
 
 class DecoderPacketWindow {
 public:
