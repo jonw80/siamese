@@ -24,12 +24,13 @@ enum {
 struct DecoderStats {
     uint64_t Counts[SiameseDecoderStats_Count];
 };
+
 class Decoder {
     public:
         SiameseResult AddRecovery(const SiameseRecoveryPacket& packet);
         // ... other methods
-    };
-    
+};
+
 } // namespace siamese
 
 #endif // SIAMESE_DECODER_H

@@ -83,6 +83,12 @@ SiameseConstants.h
 /workspaces/siamese/SiameseDecoder.h
 stdint.h
 -
+SiameseTypes.h
+/workspaces/siamese/SiameseTypes.h
+
+/workspaces/siamese/SiameseEncoder.cpp
+SiameseEncoder.h
+/workspaces/siamese/SiameseEncoder.h
 
 /workspaces/siamese/SiameseEncoder.h
 SiameseTypes.h
@@ -155,6 +161,8 @@ queue
 /workspaces/siamese/SiameseTools.h
 ../SiameseSerializers.h
 /workspaces/siamese/SiameseSerializers.h
+SiameseTypes.h
+/workspaces/siamese/tests/SiameseTypes.h
 unistd.h
 -
 windows.h

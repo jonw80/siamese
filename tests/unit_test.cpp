@@ -519,7 +519,7 @@ static void StreamingTest()
                 t_siamese_decoder_add_recovery.EndCall();
                 if (result)
                 {
-                    Logger.Error("Unable add recovery data to encoder");
+                    Logger.Error("Unable to add recovery data to decoder");
                     SIAMESE_DEBUG_BREAK();
                     return;
                 }

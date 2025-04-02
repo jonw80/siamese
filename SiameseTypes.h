@@ -4,7 +4,10 @@
 #ifndef SIAMESE_TYPES_H
 #define SIAMESE_TYPES_H
 
+#ifndef SIAMESE_PACKET_NUM_MAX
 #define SIAMESE_PACKET_NUM_MAX 0x3FFFFF
+#endif
+
 #define SIAMESE_MAX_RECOVERY_PACKETS 256
 
 typedef int SiameseResult;

@@ -25,6 +25,7 @@ CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseDecoder.cpp
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseDecoder.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseSerializers.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseTools.h
+CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseTypes.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../gf256.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../siamese.h
 

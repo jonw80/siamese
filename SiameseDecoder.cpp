@@ -71,7 +71,6 @@ Decoder::Decoder()
 
 void Decoder::SomeFunction() noexcept
 {
-    // Fix undeclared identifiers
     siamese::DecoderStats stats;
     siamese::RecoveryPackets recoveryPackets;
     siamese::TheAllocator allocator;
