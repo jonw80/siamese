@@ -19,7 +19,7 @@ int main() {
 
     uint8_t buffer[256];
     unsigned bytesWritten = 0;
-    if (siamese_encoder_get_recovery(encoder, 1, buffer, sizeof(buffer), &bytesWritten) == Siamese_Success) {
+    if (siamese_encoder_get_recovery(encoder, 1, buffer, sizeof(buffer), &bytesWritten) == siamese::SiameseResult::Success) {
         // Test passed for GetRecoveryPacket
     }
 
