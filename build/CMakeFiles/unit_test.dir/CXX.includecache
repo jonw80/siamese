@@ -121,6 +121,8 @@ new
 /workspaces/siamese/SiameseTypes.h
 cstdint
 -
+siamese.h
+/workspaces/siamese/siamese.h
 
 /workspaces/siamese/gf256.h
 stdint.h
@@ -163,26 +165,4 @@ TestTools.h
 /workspaces/siamese/SiameseCommon.h
 ../SiameseSerializers.h
 /workspaces/siamese/SiameseSerializers.h
-
-/workspaces/siamese/tests/unit_test.cpp
-vector
--
-string
--
-queue
--
-../Logger.h
-/workspaces/siamese/Logger.h
-../siamese.h
-/workspaces/siamese/siamese.h
-../SiameseTools.h
-/workspaces/siamese/SiameseTools.h
-../SiameseSerializers.h
-/workspaces/siamese/SiameseSerializers.h
-SiameseTypes.h
-/workspaces/siamese/tests/SiameseTypes.h
-unistd.h
--
-windows.h
--
 

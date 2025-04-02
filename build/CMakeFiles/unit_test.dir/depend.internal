@@ -34,6 +34,7 @@ CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o
  /workspaces/siamese/SiameseEncoder.cpp
  /workspaces/siamese/SiameseEncoder.h
  /workspaces/siamese/SiameseTypes.h
+ /workspaces/siamese/siamese.h
 CMakeFiles/unit_test.dir/SiameseTools.cpp.o
  /workspaces/siamese/SiameseTools.cpp
  /workspaces/siamese/SiameseTools.h

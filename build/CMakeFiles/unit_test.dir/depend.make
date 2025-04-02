@@ -33,6 +33,7 @@ CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../siamese.h
 CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.cpp
 CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.h
 CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o: ../SiameseTypes.h
+CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o: ../siamese.h
 
 CMakeFiles/unit_test.dir/SiameseTools.cpp.o: ../SiameseTools.cpp
 CMakeFiles/unit_test.dir/SiameseTools.cpp.o: ../SiameseTools.h
