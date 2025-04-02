@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <vector>
+#include "CheckedRegionState.h" // Ensure CheckedRegionState is included
 
 namespace siamese {
 

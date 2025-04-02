@@ -45,12 +45,10 @@ SiameseResult siamese_encode(SiameseEncoder encoder, SiameseRecoveryPacket* reco
         return Siamese_NeedMoreData;
     }
 
-    unsigned usedBytes = 0;
     return static_cast<Encoder*>(encoder)->GetRecoveryPacket(
         0, // Default recovery ID
         const_cast<uint8_t*>(recoveryOut->data),
-        recoveryOut->dataBytes,
-        usedBytes);
+        recoveryOut->dataBytes);
 }
 
 SiameseResult siamese_encoder_get_recovery(SiameseEncoder encoder, unsigned id, uint8_t* data, unsigned maxBytes, unsigned* usedBytesOut) {

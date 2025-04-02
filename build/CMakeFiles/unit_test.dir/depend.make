@@ -17,9 +17,13 @@ CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../SiameseTypes.h
 CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../gf256.h
 CMakeFiles/unit_test.dir/SiameseCommon.cpp.o: ../siamese.h
 
+CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../CheckedRegionState.h
+CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../DecoderPacketWindow.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../GrowingAlignedDataBuffer.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../Logger.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../PacketAllocator.h
+CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../RecoveryMatrixState.h
+CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../RecoveryPacketList.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseCommon.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseConstants.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseDecoder.cpp
@@ -28,6 +32,7 @@ CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseSerializers.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseTools.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseTypes.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../gf256.h
+CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../pktalloc.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../siamese.h
 
 CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.cpp

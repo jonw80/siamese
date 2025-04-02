@@ -41,7 +41,7 @@
 #include "siamese.h"
 #include "SiameseTools.h"
 
-#include "PacketAllocator.h"
+#include "PacketAllocator.h"lace PacketAllocator.h with pktalloc.h
 #include "Logger.h"
 
 #include "gf256.h"
@@ -241,7 +241,7 @@ struct GrowingAlignedDataBuffer
         SIAMESE_DEBUG_ASSERT(allocator && bytes > 0);
         if (!Data || bytes > Bytes)
         {
-            Data = allocator->Reallocate(Data, bytes, pktalloc::Realloc::CopyExisting);
+            Data = allocator->Reallocate(Data, bytes, pktalloc::ReallocType::ZeroInitialized);
             if (!Data)
             {
                 Bytes = 0;
@@ -259,7 +259,7 @@ struct GrowingAlignedDataBuffer
     bool Initialize(pktalloc::Allocator* allocator, unsigned bytes)
     {
         SIAMESE_DEBUG_ASSERT(allocator && bytes > 0);
-        Data = allocator->Reallocate(Data, bytes, pktalloc::Realloc::Uninitialized);
+        Data = allocator->Reallocate(Data, bytes, pktalloc::ReallocType::Uninitialized);
         if (!Data)
         {
             Bytes = 0;

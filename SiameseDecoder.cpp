@@ -10,7 +10,7 @@
     * Redistributions in binary form must reproduce the above copyright notice,
       this list of conditions and the following disclaimer in the documentation
       and/or other materials provided with the distribution.
-    * Neither the name of Siamese nor the names of its contributors may be
+    * Neither the name of Siamese nor the names of its contributors be
       used to endorse or promote products derived from this software without
       specific prior written permission.
 
@@ -70,8 +70,8 @@ Decoder::Decoder() noexcept {
 void Decoder::SomeFunction() noexcept
 {
     siamese::DecoderStats stats;
-    siamese::RecoveryPackets recoveryPackets;
-    siamese::TheAllocator allocator;
+    siamese::RecoveryPacketList recoveryPackets;
+    pktalloc::Allocator allocator;
 }
 
 SiameseResult Decoder::Get(SiameseOriginalPacket& packetOut)

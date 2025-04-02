@@ -8,7 +8,7 @@
 
 namespace pktalloc {
 
-enum class Realloc {
+enum class ReallocType {
     Uninitialized,
     ZeroInitialized
 };
@@ -23,8 +23,8 @@ public:
         std::free(ptr);
     }
 
-    void* Reallocate(void* ptr, size_t newSize, Realloc reallocType) {
-        if (reallocType == Realloc::ZeroInitialized) {
+    void* Reallocate(void* ptr, size_t newSize, ReallocType reallocType) {
+        if (reallocType == ReallocType::ZeroInitialized) {
             void* newPtr = std::calloc(1, newSize);
             if (ptr) {
                 std::memcpy(newPtr, ptr, newSize);
