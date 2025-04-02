@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/siamese.dir/Logger.cpp.o"
   "CMakeFiles/siamese.dir/SiameseDecoder.cpp.o"
   "CMakeFiles/siamese.dir/SiameseEncoder.cpp.o"
   "CMakeFiles/siamese.dir/logger.cpp.o"

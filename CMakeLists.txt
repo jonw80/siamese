@@ -90,24 +90,19 @@ set(SOURCE_FILES
 
 # Application
 
-add_executable(unit_test
-    unit_test.cpp
-    siamese.cpp
-    SiameseEncoder.cpp
-    SiameseDecoder.cpp
-    gf256.cpp
-)
-target_include_directories(unit_test PRIVATE ${CMAKE_SOURCE_DIR})
-target_link_libraries(unit_test Threads::Threads)
-install(TARGETS unit_test DESTINATION bin)
-
 set(SOURCES
     siamese.cpp
     SiameseEncoder.cpp
     SiameseDecoder.cpp
+    Logger.cpp
     logger.cpp
     # Add other source files as needed
 )
+
+add_executable(unit_test ${SOURCES})
+target_include_directories(unit_test PRIVATE ${CMAKE_SOURCE_DIR})
+target_link_libraries(unit_test Threads::Threads)
+install(TARGETS unit_test DESTINATION bin)
 
 # Ensure Logger.h is included in the build process
 add_library(siamese STATIC ${SOURCES})

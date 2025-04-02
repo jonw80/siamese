@@ -6,7 +6,7 @@ namespace logger {
 Channel::Channel(const char* name, Level minLevel)
     : ChannelName(name), ChannelMinLevel(minLevel) // Corrected member names
 {
-    // Constructor implementation
+    // Initialize any additional members if needed
 }
 
 } // namespace logger

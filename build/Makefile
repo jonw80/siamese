@@ -182,6 +182,36 @@ unit_test/fast:
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/build
 .PHONY : unit_test/fast
 
+Logger.o: Logger.cpp.o
+
+.PHONY : Logger.o
+
+# target to build an object file
+Logger.cpp.o:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Logger.cpp.o
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/Logger.cpp.o
+.PHONY : Logger.cpp.o
+
+Logger.i: Logger.cpp.i
+
+.PHONY : Logger.i
+
+# target to preprocess a source file
+Logger.cpp.i:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Logger.cpp.i
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/Logger.cpp.i
+.PHONY : Logger.cpp.i
+
+Logger.s: Logger.cpp.s
+
+.PHONY : Logger.s
+
+# target to generate assembly for a file
+Logger.cpp.s:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/Logger.cpp.s
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/Logger.cpp.s
+.PHONY : Logger.cpp.s
+
 SiameseDecoder.o: SiameseDecoder.cpp.o
 
 .PHONY : SiameseDecoder.o
@@ -242,33 +272,6 @@ SiameseEncoder.cpp.s:
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/SiameseEncoder.cpp.s
 .PHONY : SiameseEncoder.cpp.s
 
-gf256.o: gf256.cpp.o
-
-.PHONY : gf256.o
-
-# target to build an object file
-gf256.cpp.o:
-	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.o
-.PHONY : gf256.cpp.o
-
-gf256.i: gf256.cpp.i
-
-.PHONY : gf256.i
-
-# target to preprocess a source file
-gf256.cpp.i:
-	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.i
-.PHONY : gf256.cpp.i
-
-gf256.s: gf256.cpp.s
-
-.PHONY : gf256.s
-
-# target to generate assembly for a file
-gf256.cpp.s:
-	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.s
-.PHONY : gf256.cpp.s
-
 logger.o: logger.cpp.o
 
 .PHONY : logger.o
@@ -276,6 +279,7 @@ logger.o: logger.cpp.o
 # target to build an object file
 logger.cpp.o:
 	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/logger.cpp.o
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/logger.cpp.o
 .PHONY : logger.cpp.o
 
 logger.i: logger.cpp.i
@@ -285,6 +289,7 @@ logger.i: logger.cpp.i
 # target to preprocess a source file
 logger.cpp.i:
 	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/logger.cpp.i
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/logger.cpp.i
 .PHONY : logger.cpp.i
 
 logger.s: logger.cpp.s
@@ -294,6 +299,7 @@ logger.s: logger.cpp.s
 # target to generate assembly for a file
 logger.cpp.s:
 	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/logger.cpp.s
+	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/logger.cpp.s
 .PHONY : logger.cpp.s
 
 siamese.o: siamese.cpp.o
@@ -326,33 +332,6 @@ siamese.cpp.s:
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/siamese.cpp.s
 .PHONY : siamese.cpp.s
 
-unit_test.o: unit_test.cpp.o
-
-.PHONY : unit_test.o
-
-# target to build an object file
-unit_test.cpp.o:
-	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test.cpp.o
-.PHONY : unit_test.cpp.o
-
-unit_test.i: unit_test.cpp.i
-
-.PHONY : unit_test.i
-
-# target to preprocess a source file
-unit_test.cpp.i:
-	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test.cpp.i
-.PHONY : unit_test.cpp.i
-
-unit_test.s: unit_test.cpp.s
-
-.PHONY : unit_test.s
-
-# target to generate assembly for a file
-unit_test.cpp.s:
-	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/unit_test.cpp.s
-.PHONY : unit_test.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -367,24 +346,21 @@ help:
 	@echo "... edit_cache"
 	@echo "... siamese"
 	@echo "... unit_test"
+	@echo "... Logger.o"
+	@echo "... Logger.i"
+	@echo "... Logger.s"
 	@echo "... SiameseDecoder.o"
 	@echo "... SiameseDecoder.i"
 	@echo "... SiameseDecoder.s"
 	@echo "... SiameseEncoder.o"
 	@echo "... SiameseEncoder.i"
 	@echo "... SiameseEncoder.s"
-	@echo "... gf256.o"
-	@echo "... gf256.i"
-	@echo "... gf256.s"
 	@echo "... logger.o"
 	@echo "... logger.i"
 	@echo "... logger.s"
 	@echo "... siamese.o"
 	@echo "... siamese.i"
 	@echo "... siamese.s"
-	@echo "... unit_test.o"
-	@echo "... unit_test.i"
-	@echo "... unit_test.s"
 .PHONY : help
 
 
