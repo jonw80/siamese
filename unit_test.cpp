@@ -1,8 +1,9 @@
 #include "siamese.h"
+#include "SiameseEncoder.h" // Include the header for the Encoder class
 #include <iostream>
 
 int main() {
-    siamese::Encoder encoder;
+    siamese::Encoder encoder; // Use the Encoder class from the siamese namespace
     SiameseOriginalPacket packet;
 
     // Example usage
