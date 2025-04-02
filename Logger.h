@@ -154,6 +154,7 @@ enum class Level {
     Warning,
     Error,
     Silent,
+    Off, // Added Off level
     Count // Ensure this matches the number of levels above
 };
 
