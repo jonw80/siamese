@@ -3,9 +3,7 @@
 
 namespace siamese {
 
-class DecoderStats {
-public:
-    // Placeholder for decoder statistics
+struct DecoderStats { // Changed from class to struct to match usage
     void Reset() {}
     void Log() const {}
 };

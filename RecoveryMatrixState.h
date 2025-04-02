@@ -1,9 +1,10 @@
 #ifndef RECOVERY_MATRIX_STATE_H
 #define RECOVERY_MATRIX_STATE_H
 
-#include "DecoderPacketWindow.h" // Include the header for DecoderPacketWindow
-
 namespace siamese {
+
+// Forward declaration to break circular dependency
+class DecoderPacketWindow;
 
 class RecoveryMatrixState {
 public:
