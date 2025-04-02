@@ -148,12 +148,11 @@ static const size_t kWorkQueueLimit = 1024;
 
 /// Logging level
 enum class Level {
-    Silent,  // Add Silent level to suppress all logging
-    Info,
-    Warning,
-    Error,
-    Debug,
-    Trace
+    Off,       // Suppress all logs
+    Error,     // Log errors only
+    Warning,   // Log warnings and errors
+    Info,      // Log informational messages, warnings, and errors
+    Debug      // Log all messages
 };
 
 /// Stringize level values
