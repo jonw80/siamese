@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/workspaces/siamese/Logger.cpp
+Logger.h
+/workspaces/siamese/Logger.h
+cstdio
+-
+windows.h
+-
+
 /workspaces/siamese/Logger.h
 sstream
 -
