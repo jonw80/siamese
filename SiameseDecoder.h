@@ -28,7 +28,14 @@ struct DecoderStats {
 class Decoder {
     public:
         SiameseResult AddRecovery(const SiameseRecoveryPacket& packet);
-        // ... other methods
+
+    private:
+        RecoveryPacketList RecoveryPackets;
+        pktalloc::Allocator TheAllocator;
+        DecoderPacketWindow Window;
+        CheckedRegionState CheckedRegion;
+        RecoveryMatrixState RecoveryMatrix;
+        DecoderStats Stats;
 };
 
 } // namespace siamese

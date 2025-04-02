@@ -43,7 +43,7 @@
 //------------------------------------------------------------------------------
 // DecoderStats
 
-DecoderStats::DecoderStats()
+DecoderStats::DecoderStats() noexcept
 {
     for (unsigned i = 0; i < SiameseDecoderStats_Count; ++i) {
         Counts[i] = 0;
@@ -54,7 +54,7 @@ DecoderStats::DecoderStats()
 //------------------------------------------------------------------------------
 // Decoder
 
-Decoder::Decoder()
+Decoder::Decoder() noexcept
 {
     RecoveryPackets.TheAllocator  = &TheAllocator;
     RecoveryPackets.CheckedRegion = &CheckedRegion;
