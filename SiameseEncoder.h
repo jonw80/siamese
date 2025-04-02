@@ -10,12 +10,11 @@ namespace siamese {
 class Encoder {
 public:
     Encoder();
-    ~Encoder();
-
+    virtual ~Encoder(); // Add virtual destructor
     SiameseResult Add(SiameseOriginalPacket& packet);
     SiameseResult Retransmit(SiameseOriginalPacket& packet);
-    SiameseResult GetRecoveryPacket(unsigned id, uint8_t* buffer, unsigned bufferSize, unsigned& packetSize);
     SiameseResult Acknowledge(const uint8_t* data, unsigned length, unsigned& ackedBytes);
+    SiameseResult GetRecoveryPacket(unsigned id, uint8_t* buffer, unsigned bufferSize, unsigned& packetSize);
 };
 
 } // namespace siamese

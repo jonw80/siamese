@@ -62,13 +62,9 @@ SiameseResult siamese_acknowledge(SiameseEncoder encoder, const uint8_t* data, u
 
 namespace siamese {
 
-Encoder::Encoder() {
-    // Constructor implementation
-}
+Encoder::Encoder() {}
 
-Encoder::~Encoder() {
-    // Destructor implementation
-}
+Encoder::~Encoder() {}
 
 SiameseResult Encoder::Add(SiameseOriginalPacket& packet) {
     (void)packet; // Suppress unused parameter warning
@@ -80,18 +76,18 @@ SiameseResult Encoder::Retransmit(SiameseOriginalPacket& packet) {
     return SiameseResult::Success;
 }
 
-SiameseResult Encoder::GetRecoveryPacket(unsigned id, uint8_t* data, unsigned maxBytes, unsigned& usedBytes) {
-    (void)id; // Suppress unused parameter warning
-    (void)data;
-    (void)maxBytes;
-    usedBytes = 0; // Example: Set usedBytes to 0
+SiameseResult Encoder::Acknowledge(const uint8_t* data, unsigned length, unsigned& ackedBytes) {
+    (void)data; // Suppress unused parameter warning
+    (void)length; // Suppress unused parameter warning
+    (void)ackedBytes; // Suppress unused parameter warning
     return SiameseResult::Success;
 }
 
-SiameseResult Encoder::Acknowledge(const uint8_t* data, unsigned bytes, unsigned& outAcked) {
-    (void)data; // Suppress unused parameter warning
-    (void)bytes;
-    outAcked = 0; // Example: Set outAcked to 0
+SiameseResult Encoder::GetRecoveryPacket(unsigned id, uint8_t* buffer, unsigned bufferSize, unsigned& packetSize) {
+    (void)id; // Suppress unused parameter warning
+    (void)buffer; // Suppress unused parameter warning
+    (void)bufferSize; // Suppress unused parameter warning
+    (void)packetSize; // Suppress unused parameter warning
     return SiameseResult::Success;
 }
 
