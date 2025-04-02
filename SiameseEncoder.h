@@ -9,11 +9,7 @@ struct SiameseOriginalPacket {
     // Define the structure as needed
 };
 
-enum SiameseResult {
-    Siamese_Success,
-    Siamese_NeedMoreData,
-    // Add other result codes as needed
-};
+enum class SiameseResult; // Forward declaration of the scoped enum class
 
 class Encoder {
 public:
@@ -22,8 +18,8 @@ public:
 
     SiameseResult Add(SiameseOriginalPacket& packet);
     SiameseResult Retransmit(SiameseOriginalPacket& packet);
-    SiameseResult GetRecoveryPacket(unsigned id, uint8_t* data, unsigned maxBytes, unsigned& usedBytes);
-    SiameseResult Acknowledge(const uint8_t* data, unsigned bytes, unsigned& outAcked);
+    SiameseResult GetRecoveryPacket(unsigned id, uint8_t* buffer, unsigned bufferSize, unsigned& packetSize);
+    SiameseResult Acknowledge(const uint8_t* data, unsigned length, unsigned& ackedBytes);
 };
 
 } // namespace siamese
