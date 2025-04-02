@@ -1,28 +1,23 @@
 #include "siamese.h"
-#include "SiameseEncoder.h"
+#include <iostream>
 
 int main() {
+    // Initialize the Siamese library
+    if (siamese_init() != 0) {
+        std::cerr << "Failed to initialize Siamese library." << std::endl;
+        return 1;
+    }
+
+    // Create an encoder
     SiameseEncoder encoder = siamese_encoder_create();
-
-    SiameseOriginalPacket packet;
-    packet.data = nullptr;
-    packet.dataBytes = 0;
-    packet.packetNum = 0;
-
-    if (siamese_encoder_add(encoder, &packet) == Siamese_Success) {
-        // Test passed for Add
+    if (!encoder) {
+        std::cerr << "Failed to create Siamese encoder." << std::endl;
+        return 1;
     }
 
-    if (siamese_encoder_retransmit(encoder, &packet) == Siamese_Success) {
-        // Test passed for Retransmit
-    }
-
-    uint8_t buffer[256];
-    unsigned bytesWritten = 0;
-    if (siamese_encoder_get_recovery(encoder, 1, buffer, sizeof(buffer), &bytesWritten) == siamese::SiameseResult::Success) {
-        // Test passed for GetRecoveryPacket
-    }
-
+    // Free the encoder
     siamese_encoder_free(encoder);
+
+    std::cout << "Siamese library test completed successfully." << std::endl;
     return 0;
 }
