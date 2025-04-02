@@ -23,6 +23,9 @@ struct RecoveryPacket {
 
 class RecoveryPacketList {
 public:
+    pktalloc::Allocator* TheAllocator = nullptr;
+    CheckedRegionState* CheckedRegion = nullptr;
+
     std::vector<RecoveryPacket*> Packets;
 
     ~RecoveryPacketList() {

@@ -5,6 +5,10 @@ namespace siamese {
 
 class RecoveryMatrixState {
 public:
+    pktalloc::Allocator* TheAllocator = nullptr;
+    DecoderPacketWindow* Window = nullptr;
+    CheckedRegionState* CheckedRegion = nullptr;
+
     void Reset() {
         // Placeholder for reset logic
     }

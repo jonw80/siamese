@@ -43,8 +43,7 @@
 //------------------------------------------------------------------------------
 // DecoderStats
 
-DecoderStats::DecoderStats() noexcept
-{
+DecoderStats::DecoderStats() noexcept {
     for (unsigned i = 0; i < SiameseDecoderStats_Count; ++i) {
         Counts[i] = 0;
     }
@@ -54,19 +53,18 @@ DecoderStats::DecoderStats() noexcept
 //------------------------------------------------------------------------------
 // Decoder
 
-Decoder::Decoder() noexcept
-{
-    RecoveryPackets.TheAllocator  = &TheAllocator;
+Decoder::Decoder() noexcept {
+    RecoveryPackets.TheAllocator = &TheAllocator;
     RecoveryPackets.CheckedRegion = &CheckedRegion;
-    Window.TheAllocator           = &TheAllocator;
-    Window.Stats                  = &Stats;
-    Window.CheckedRegion          = &CheckedRegion;
-    Window.RecoveryPackets        = &RecoveryPackets;
-    Window.RecoveryMatrix         = &RecoveryMatrix;
-    RecoveryMatrix.TheAllocator   = &TheAllocator;
-    RecoveryMatrix.Window         = &Window;
-    RecoveryMatrix.CheckedRegion  = &CheckedRegion;
-    CheckedRegion.RecoveryMatrix  = &RecoveryMatrix;
+    Window.TheAllocator = &TheAllocator;
+    Window.Stats = &Stats;
+    Window.CheckedRegion = &CheckedRegion;
+    Window.RecoveryPackets = &RecoveryPackets;
+    Window.RecoveryMatrix = &RecoveryMatrix;
+    RecoveryMatrix.TheAllocator = &TheAllocator;
+    RecoveryMatrix.Window = &Window;
+    RecoveryMatrix.CheckedRegion = &CheckedRegion;
+    CheckedRegion.RecoveryMatrix = &RecoveryMatrix;
 }
 
 void Decoder::SomeFunction() noexcept

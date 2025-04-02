@@ -8,6 +8,12 @@ namespace siamese {
 
 class DecoderPacketWindow {
 public:
+    pktalloc::Allocator* TheAllocator = nullptr;
+    DecoderStats* Stats = nullptr;
+    CheckedRegionState* CheckedRegion = nullptr;
+    RecoveryPacketList* RecoveryPackets = nullptr;
+    RecoveryMatrixState* RecoveryMatrix = nullptr;
+
     unsigned Count = 0;
 
     bool GrowWindow(unsigned windowElementEnd) {
