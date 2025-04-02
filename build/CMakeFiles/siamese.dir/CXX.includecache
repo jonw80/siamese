@@ -30,3 +30,7 @@ thread
 memory
 -
 
+/workspaces/siamese/logger.cpp
+Logger.h
+/workspaces/siamese/Logger.h
+
