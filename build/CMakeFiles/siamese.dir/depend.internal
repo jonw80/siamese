@@ -24,6 +24,7 @@ CMakeFiles/siamese.dir/SiameseEncoder.cpp.o
  /workspaces/siamese/SiameseEncoder.cpp
  /workspaces/siamese/SiameseEncoder.h
  /workspaces/siamese/SiameseResult.h
+ /workspaces/siamese/siamese.h
 CMakeFiles/siamese.dir/gf256.cpp.o
  /workspaces/siamese/gf256.cpp
  /workspaces/siamese/gf256.h

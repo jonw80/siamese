@@ -23,6 +23,7 @@ CMakeFiles/siamese.dir/SiameseDecoder.cpp.o: ../siamese.h
 CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.cpp
 CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../SiameseEncoder.h
 CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../SiameseResult.h
+CMakeFiles/siamese.dir/SiameseEncoder.cpp.o: ../siamese.h
 
 CMakeFiles/siamese.dir/gf256.cpp.o: ../gf256.cpp
 CMakeFiles/siamese.dir/gf256.cpp.o: ../gf256.h

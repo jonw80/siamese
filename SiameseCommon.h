@@ -65,6 +65,13 @@ static_assert(pktalloc::PKTALLOC_ALIGN_BYTES == GF256_ALIGN_BYTES, "headers are 
 
 namespace siamese {
 
+struct OriginalPacket {
+    struct {
+        const uint8_t* data;
+        unsigned length;
+    } Buffer;
+};
+
 
 //------------------------------------------------------------------------------
 // Compiler Flags

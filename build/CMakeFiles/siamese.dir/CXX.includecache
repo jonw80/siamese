@@ -118,11 +118,19 @@ DecoderPacketWindow.h
 DecoderStats.h
 /workspaces/siamese/DecoderStats.h
 
+/workspaces/siamese/SiameseEncoder.cpp
+SiameseEncoder.h
+/workspaces/siamese/SiameseEncoder.h
+SiameseResult.h
+/workspaces/siamese/SiameseResult.h
+
 /workspaces/siamese/SiameseEncoder.h
 cstdint
 -
 SiameseResult.h
 /workspaces/siamese/SiameseResult.h
+siamese.h
+/workspaces/siamese/siamese.h
 
 /workspaces/siamese/SiameseResult.h
 
