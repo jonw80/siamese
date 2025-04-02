@@ -122,10 +122,6 @@ emmintrin.h
 arm_neon.h
 -
 
-/workspaces/siamese/logger.cpp
-Logger.h
-/workspaces/siamese/Logger.h
-
 /workspaces/siamese/pktalloc.h
 cstddef
 -
