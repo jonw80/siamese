@@ -47,6 +47,8 @@ CheckedRegionState.h
 /workspaces/siamese/CheckedRegionState.h
 RecoveryMatrixState.h
 /workspaces/siamese/RecoveryMatrixState.h
+DecoderStats.h
+/workspaces/siamese/DecoderStats.h
 
 /workspaces/siamese/SiameseEncoder.h
 SiameseTypes.h

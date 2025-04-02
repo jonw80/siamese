@@ -47,7 +47,7 @@ SiameseResult siamese_encode(SiameseEncoder encoder, SiameseRecoveryPacket* reco
 
     unsigned usedBytes = 0; // Declare a variable for the missing argument
     unsigned maxBytes = recoveryOut->dataBytes; // Declare maxBytes based on recoveryOut->dataBytes
-    uint8_t* dataBuffer = reinterpret_cast<uint8_t*>(recoveryOut->data); // Ensure data is a uint8_t* pointer
+    uint8_t* dataBuffer = const_cast<uint8_t*>(recoveryOut->data); // Use const_cast to remove const qualifier
     return static_cast<Encoder*>(encoder)->GetRecoveryPacket(
         0, // Default recovery ID
         dataBuffer, maxBytes, usedBytes); // Pass the correct arguments
