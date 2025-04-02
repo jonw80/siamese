@@ -3,6 +3,7 @@
 
 #include "SiameseCommon.h"
 #include "SiameseSerializers.h"
+#include "SiameseTypes.h"
 
 namespace siamese {
 
