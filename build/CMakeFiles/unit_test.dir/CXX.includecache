@@ -42,16 +42,6 @@ thread
 memory
 -
 
-/workspaces/siamese/PacketAllocator.h
-stdint.h
--
-new
--
-cstring
--
-intrin.h
--
-
 /workspaces/siamese/RecoveryMatrixState.h
 
 /workspaces/siamese/RecoveryPacketList.h
@@ -75,8 +65,8 @@ siamese.h
 /workspaces/siamese/siamese.h
 SiameseTools.h
 /workspaces/siamese/SiameseTools.h
-PacketAllocator.h
-/workspaces/siamese/PacketAllocator.h
+pktalloc.h
+/workspaces/siamese/pktalloc.h
 Logger.h
 /workspaces/siamese/Logger.h
 gf256.h
@@ -119,10 +109,6 @@ CheckedRegionState.h
 /workspaces/siamese/CheckedRegionState.h
 RecoveryMatrixState.h
 /workspaces/siamese/RecoveryMatrixState.h
-
-/workspaces/siamese/SiameseEncoder.h
-SiameseTypes.h
-/workspaces/siamese/SiameseTypes.h
 
 /workspaces/siamese/SiameseSerializers.h
 siamese.h
@@ -175,16 +161,6 @@ cstdlib
 -
 cstring
 -
-
-/workspaces/siamese/siamese.cpp
-siamese.h
-/workspaces/siamese/siamese.h
-SiameseEncoder.h
-/workspaces/siamese/SiameseEncoder.h
-SiameseDecoder.h
-/workspaces/siamese/SiameseDecoder.h
-gf256.h
-/workspaces/siamese/gf256.h
 
 /workspaces/siamese/siamese.h
 stdint.h
