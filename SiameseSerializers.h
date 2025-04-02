@@ -48,6 +48,7 @@
 #include "SiameseTools.h"
 #include "SiameseCommon.h"
 #include "gf256.h"
+#include "siamese.h"
 
 namespace siamese {
 

@@ -1,0 +1,52 @@
+[
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/gf256.cpp.o -c /workspaces/siamese/gf256.cpp",
+  "file": "/workspaces/siamese/gf256.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/Logger.cpp.o -c /workspaces/siamese/Logger.cpp",
+  "file": "/workspaces/siamese/Logger.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/PacketAllocator.cpp.o -c /workspaces/siamese/PacketAllocator.cpp",
+  "file": "/workspaces/siamese/PacketAllocator.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/SiameseCommon.cpp.o -c /workspaces/siamese/SiameseCommon.cpp",
+  "file": "/workspaces/siamese/SiameseCommon.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/siamese.cpp.o -c /workspaces/siamese/siamese.cpp",
+  "file": "/workspaces/siamese/siamese.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o -c /workspaces/siamese/SiameseDecoder.cpp",
+  "file": "/workspaces/siamese/SiameseDecoder.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/SiameseEncoder.cpp.o -c /workspaces/siamese/SiameseEncoder.cpp",
+  "file": "/workspaces/siamese/SiameseEncoder.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/SiameseTools.cpp.o -c /workspaces/siamese/SiameseTools.cpp",
+  "file": "/workspaces/siamese/SiameseTools.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/tests/TestTools.cpp.o -c /workspaces/siamese/tests/TestTools.cpp",
+  "file": "/workspaces/siamese/tests/TestTools.cpp"
+},
+{
+  "directory": "/workspaces/siamese/build",
+  "command": "/usr/bin/clang++     -Wall -Wextra -pedantic -Wno-unused-local-typedefs -fPIC -g -O0 -march=native -fstack-protector   -DDEBUG -pthread -std=gnu++14 -o CMakeFiles/unit_test.dir/tests/unit_test.cpp.o -c /workspaces/siamese/tests/unit_test.cpp",
+  "file": "/workspaces/siamese/tests/unit_test.cpp"
+}
+]
