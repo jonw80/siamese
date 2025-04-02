@@ -111,10 +111,12 @@ target_include_directories(unit_test PRIVATE ${CMAKE_SOURCE_DIR})
 target_link_libraries(unit_test Threads::Threads)
 install(TARGETS unit_test DESTINATION bin)
 
-add_library(siamese
+set(SOURCES
+    siamese.cpp
     SiameseEncoder.cpp
     SiameseDecoder.cpp
-    gf256.cpp
-    siamese.cpp
+    logger.cpp
     # Add other source files as needed
 )
+
+add_library(siamese STATIC ${SOURCES})

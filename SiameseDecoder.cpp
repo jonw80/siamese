@@ -35,8 +35,12 @@
 #include "DecoderPacketWindow.h" // For DecoderPacketWindow
 #include "SiameseResult.h" // For SiameseResult
 #include "SiameseCommon.h" // Include OriginalPacket
+#include "logger.h" // Ensure logger header is included
 
 namespace siamese {
+
+// Ensure logger::Channel is properly initialized
+logger::Channel decoderLogger("Decoder", logger::Level::Info);
 
 #ifdef SIAMESE_DECODER_DUMP_VERBOSE
     static logger::Channel Logger("Decoder", logger::Level::Debug);

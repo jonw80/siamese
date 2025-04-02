@@ -248,7 +248,6 @@ gf256.o: gf256.cpp.o
 
 # target to build an object file
 gf256.cpp.o:
-	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.o
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.o
 .PHONY : gf256.cpp.o
 
@@ -258,7 +257,6 @@ gf256.i: gf256.cpp.i
 
 # target to preprocess a source file
 gf256.cpp.i:
-	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.i
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.i
 .PHONY : gf256.cpp.i
 
@@ -268,9 +266,35 @@ gf256.s: gf256.cpp.s
 
 # target to generate assembly for a file
 gf256.cpp.s:
-	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/gf256.cpp.s
 	$(MAKE) -f CMakeFiles/unit_test.dir/build.make CMakeFiles/unit_test.dir/gf256.cpp.s
 .PHONY : gf256.cpp.s
+
+logger.o: logger.cpp.o
+
+.PHONY : logger.o
+
+# target to build an object file
+logger.cpp.o:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/logger.cpp.o
+.PHONY : logger.cpp.o
+
+logger.i: logger.cpp.i
+
+.PHONY : logger.i
+
+# target to preprocess a source file
+logger.cpp.i:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/logger.cpp.i
+.PHONY : logger.cpp.i
+
+logger.s: logger.cpp.s
+
+.PHONY : logger.s
+
+# target to generate assembly for a file
+logger.cpp.s:
+	$(MAKE) -f CMakeFiles/siamese.dir/build.make CMakeFiles/siamese.dir/logger.cpp.s
+.PHONY : logger.cpp.s
 
 siamese.o: siamese.cpp.o
 
@@ -352,6 +376,9 @@ help:
 	@echo "... gf256.o"
 	@echo "... gf256.i"
 	@echo "... gf256.s"
+	@echo "... logger.o"
+	@echo "... logger.i"
+	@echo "... logger.s"
 	@echo "... siamese.o"
 	@echo "... siamese.i"
 	@echo "... siamese.s"
