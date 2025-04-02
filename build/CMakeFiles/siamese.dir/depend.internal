@@ -18,7 +18,6 @@ CMakeFiles/siamese.dir/SiameseDecoder.cpp.o
  /workspaces/siamese/SiameseTools.h
  /workspaces/siamese/SiameseTypes.h
  /workspaces/siamese/gf256.h
- /workspaces/siamese/logger.h
  /workspaces/siamese/pktalloc.h
  /workspaces/siamese/siamese.h
 CMakeFiles/siamese.dir/SiameseEncoder.cpp.o
@@ -27,8 +26,8 @@ CMakeFiles/siamese.dir/SiameseEncoder.cpp.o
  /workspaces/siamese/SiameseResult.h
  /workspaces/siamese/siamese.h
 CMakeFiles/siamese.dir/logger.cpp.o
+ /workspaces/siamese/Logger.h
  /workspaces/siamese/logger.cpp
- /workspaces/siamese/logger.h
 CMakeFiles/siamese.dir/siamese.cpp.o
  /workspaces/siamese/CheckedRegionState.h
  /workspaces/siamese/DecoderPacketWindow.h

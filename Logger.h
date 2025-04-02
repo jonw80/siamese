@@ -150,7 +150,9 @@ static const size_t kWorkQueueLimit = 1024;
 enum class Level {
     Info,
     Warning,
-    Error
+    Error,
+    Debug,  // Add Debug level
+    Trace   // Add Trace level
 };
 
 /// Stringize level values

@@ -2,6 +2,7 @@
 #include "SiameseEncoder.h"
 #include "SiameseDecoder.h"
 #include "gf256.h"
+#include "Logger.h"
 
 using namespace siamese;
 
