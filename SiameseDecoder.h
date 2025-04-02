@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 #include "SiameseTypes.h"
+#include "pktalloc.h" // For pktalloc::Allocator
+#include "RecoveryPacketList.h" // For RecoveryPacketList
+#include "DecoderPacketWindow.h" // For DecoderPacketWindow
+#include "CheckedRegionState.h" // For CheckedRegionState
+#include "RecoveryMatrixState.h" // For RecoveryMatrixState
 
 namespace siamese {
 
