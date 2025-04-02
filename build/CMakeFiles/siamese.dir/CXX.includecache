@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/workspaces/siamese/Encoder.cpp
+Encoder.h
+/workspaces/siamese/Encoder.h
+
+/workspaces/siamese/gf256.cpp
+gf256.h
+/workspaces/siamese/gf256.h
+unistd.h
+-
+fcntl.h
+-
+elf.h
+-
+linux/auxvec.h
+-
+cpu-features.h
+-
+intrin.h
+-
+
+/workspaces/siamese/gf256.h
+stdint.h
+-
+cstring
+-
+immintrin.h
+-
+tmmintrin.h
+-
+emmintrin.h
+-
+arm_neon.h
+-
+

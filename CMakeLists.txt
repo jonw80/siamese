@@ -63,7 +63,8 @@ set(INCLUDE_FILES
     SiameseCommon.h
     SiameseDecoder.h
     SiameseEncoder.h
-    GrowingAlignedDataBuffer.h   # <-- ADD THIS
+    Encoder.h
+    GrowingAlignedDataBuffer.h
     siamese.h
     SiameseSerializers.h
     SiameseTools.h
