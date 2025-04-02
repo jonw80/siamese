@@ -371,13 +371,6 @@ struct RecoveryMetadata
     */
 };
 
-struct OriginalPacket {
-    struct {
-        const uint8_t* data;
-        unsigned length;
-    } Buffer;
-};
-
 } // namespace siamese
 
 #endif // SIAMESE_COMMON_H

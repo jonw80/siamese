@@ -30,11 +30,14 @@ CMakeFiles/siamese.dir/gf256.cpp.o: ../gf256.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../CheckedRegionState.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../DecoderPacketWindow.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../DecoderStats.h
+CMakeFiles/siamese.dir/siamese.cpp.o: ../Logger.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../RecoveryMatrixState.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../RecoveryPacketList.h
+CMakeFiles/siamese.dir/siamese.cpp.o: ../SiameseCommon.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../SiameseDecoder.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../SiameseEncoder.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../SiameseResult.h
+CMakeFiles/siamese.dir/siamese.cpp.o: ../SiameseTools.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../gf256.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../pktalloc.h
 CMakeFiles/siamese.dir/siamese.cpp.o: ../siamese.cpp

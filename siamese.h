@@ -7,7 +7,6 @@ extern "C" {
 
 #include <stdint.h>  // For standard types like uint64_t
 
-// Forward-declared types now fully defined here
 typedef struct SiameseOriginalPacket {
     const uint8_t* data;
     unsigned dataBytes;

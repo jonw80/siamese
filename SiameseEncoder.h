@@ -3,14 +3,9 @@
 
 #include <cstdint>
 #include "SiameseResult.h" // Ensure SiameseResult is included
+#include "siamese.h" // Use SiameseOriginalPacket from siamese.h
 
 namespace siamese {
-
-struct SiameseOriginalPacket {
-    const uint8_t* data;
-    unsigned dataBytes;
-    unsigned packetNum;
-};
 
 class Encoder {
 public:

@@ -31,11 +31,14 @@ CMakeFiles/siamese.dir/siamese.cpp.o
  /workspaces/siamese/CheckedRegionState.h
  /workspaces/siamese/DecoderPacketWindow.h
  /workspaces/siamese/DecoderStats.h
+ /workspaces/siamese/Logger.h
  /workspaces/siamese/RecoveryMatrixState.h
  /workspaces/siamese/RecoveryPacketList.h
+ /workspaces/siamese/SiameseCommon.h
  /workspaces/siamese/SiameseDecoder.h
  /workspaces/siamese/SiameseEncoder.h
  /workspaces/siamese/SiameseResult.h
+ /workspaces/siamese/SiameseTools.h
  /workspaces/siamese/gf256.h
  /workspaces/siamese/pktalloc.h
  /workspaces/siamese/siamese.cpp

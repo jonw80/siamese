@@ -23,19 +23,23 @@ public:
     bool EmergencyDisabled = false;
 
     bool GrowWindow(unsigned windowElementEnd) {
+        (void)windowElementEnd; // Suppress unused parameter warning
         Count = windowElementEnd;
         return true;
     }
 
     unsigned ColumnToElement(unsigned column) const {
+        (void)column; // Suppress unused parameter warning
         return column;
     }
 
     bool InvalidElement(unsigned element) const {
+        (void)element; // Suppress unused parameter warning
         return element >= Count;
     }
 
     OriginalPacket* GetWindowElement(unsigned element) {
+        (void)element; // Suppress unused parameter warning
         return nullptr; // Example return value
     }
 };
