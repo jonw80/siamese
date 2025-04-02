@@ -2,8 +2,10 @@
 
 namespace logger {
 
-Channel::Channel(const char* name, Level level)
-    : name(name), level(level) {
+// Constructor for Channel
+Channel::Channel(const char* name, Level minLevel)
+    : ChannelName(name), ChannelMinLevel(minLevel) // Corrected member names
+{
     // Constructor implementation
 }
 
