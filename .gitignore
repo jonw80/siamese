@@ -258,3 +258,16 @@ lib/SiameseUnitTests.exe
 lib/SiameseUnitTests.exe
 *.exe
 lib/SiameseUnitTests.exe
+
+# === Siamese Project Build Artifacts ===
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+cmake_install.cmake
+Makefile
+unit_test
+*.o
+*.a
+*.so
+*.out
+*.log
