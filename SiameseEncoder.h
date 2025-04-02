@@ -2,14 +2,15 @@
 #define SIAMESE_ENCODER_H
 
 #include <cstdint>
+#include "SiameseResult.h" // Ensure SiameseResult is included
 
 namespace siamese {
 
 struct SiameseOriginalPacket {
-    // Define the structure as needed
+    const uint8_t* data;
+    unsigned dataBytes;
+    unsigned packetNum;
 };
-
-enum class SiameseResult; // Forward declaration of the scoped enum class
 
 class Encoder {
 public:

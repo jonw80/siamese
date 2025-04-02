@@ -6,8 +6,16 @@
 #include "SiameseDecoder.h" // Ensure DecoderStats and CheckedRegionState are included
 #include "DecoderStats.h" // Include the header for DecoderStats
 #include "RecoveryMatrixState.h" // Ensure RecoveryMatrixState is included
+#include "SiameseResult.h" // For SiameseResult
 
 namespace siamese {
+
+struct OriginalPacket {
+    struct {
+        const uint8_t* data;
+        unsigned length;
+    } Buffer;
+};
 
 class DecoderPacketWindow {
 public:
@@ -18,6 +26,7 @@ public:
     RecoveryMatrixState* RecoveryMatrix = nullptr;
 
     unsigned Count = 0;
+    bool EmergencyDisabled = false;
 
     bool GrowWindow(unsigned windowElementEnd) {
         Count = windowElementEnd;
@@ -25,11 +34,15 @@ public:
     }
 
     unsigned ColumnToElement(unsigned column) const {
-        return column % Count;
+        return column;
     }
 
     bool InvalidElement(unsigned element) const {
         return element >= Count;
+    }
+
+    OriginalPacket* GetWindowElement(unsigned element) {
+        return nullptr; // Example return value
     }
 };
 

@@ -1,43 +1,24 @@
 #ifndef SIAMESE_DECODER_H
 #define SIAMESE_DECODER_H
 
-#include <stdint.h>
-#include "SiameseTypes.h"
-#include "pktalloc.h" // For pktalloc::Allocator
-#include "RecoveryPacketList.h" // For RecoveryPacketList
+#include <cstdint>
+#include "siamese.h" // For SiameseOriginalPacket and SiameseRecoveryPacket
+#include "SiameseResult.h" // For SiameseResult
 #include "DecoderPacketWindow.h" // For DecoderPacketWindow
-#include "CheckedRegionState.h" // For CheckedRegionState
-#include "RecoveryMatrixState.h" // For RecoveryMatrixState
-#include "DecoderStats.h" // Include the correct header for DecoderStats
+#include "DecoderStats.h" // For DecoderStats
 
 namespace siamese {
 
-enum {
-    SiameseDecoderStats_AckCount,
-    SiameseDecoderStats_AckBytes,
-    SiameseDecoderStats_OriginalCount,
-    SiameseDecoderStats_OriginalBytes,
-    SiameseDecoderStats_DupedOriginalCount,
-    SiameseDecoderStats_RecoveryCount,
-    SiameseDecoderStats_RecoveryBytes,
-    SiameseDecoderStats_DupedRecoveryCount,
-    SiameseDecoderStats_SolveFailCount,
-    SiameseDecoderStats_SolveSuccessCount,
-    SiameseDecoderStats_MemoryUsed,
-    SiameseDecoderStats_Count
-};
-
 class Decoder {
-    public:
-        SiameseResult AddRecovery(const SiameseRecoveryPacket& packet);
+public:
+    Decoder() noexcept;
+    void SomeFunction() noexcept;
+    SiameseResult Get(SiameseOriginalPacket& packetOut);
+    SiameseResult AddRecovery(const SiameseRecoveryPacket& packet);
 
-    private:
-        RecoveryPacketList RecoveryPackets;
-        pktalloc::Allocator TheAllocator;
-        DecoderPacketWindow Window;
-        CheckedRegionState CheckedRegion;
-        RecoveryMatrixState RecoveryMatrix;
-        DecoderStats Stats;
+private:
+    DecoderPacketWindow Window;
+    DecoderStats Stats;
 };
 
 } // namespace siamese
