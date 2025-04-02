@@ -1,25 +1,29 @@
 #include "siamese.h"
 #include "SiameseEncoder.h"
-#include <iostream>
 
 int main() {
-    siamese::Encoder encoder;
-    siamese::SiameseOriginalPacket packet;
+    SiameseEncoder encoder = siamese_encoder_create();
 
-    // Example usage
-    if (encoder.Add(packet) == siamese::Siamese_Success) {
-        std::cout << "Packet added successfully." << std::endl;
+    SiameseOriginalPacket packet = {
+        .data = nullptr,
+        .dataBytes = 0,
+        .packetNum = 0,
+    };
+
+    if (siamese_encoder_add(encoder, &packet) == Siamese_Success) {
+        // Test passed for Add
     }
 
-    if (encoder.Retransmit(packet) == siamese::Siamese_Success) {
-        std::cout << "Packet retransmitted successfully." << std::endl;
+    if (siamese_encoder_retransmit(encoder, &packet) == Siamese_Success) {
+        // Test passed for Retransmit
     }
 
-    unsigned char buffer[256];
-    unsigned int bytesWritten = 0;
-    if (encoder.GetRecoveryPacket(1, buffer, sizeof(buffer), bytesWritten) == siamese::Siamese_Success) {
-        std::cout << "Recovery packet generated, bytes written: " << bytesWritten << std::endl;
+    uint8_t buffer[256];
+    unsigned bytesWritten = 0;
+    if (siamese_encoder_get_recovery(encoder, 1, buffer, sizeof(buffer), &bytesWritten) == Siamese_Success) {
+        // Test passed for GetRecoveryPacket
     }
 
+    siamese_encoder_free(encoder);
     return 0;
 }
