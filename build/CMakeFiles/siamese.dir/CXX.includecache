@@ -120,6 +120,14 @@ DecoderPacketWindow.h
 DecoderStats.h
 /workspaces/siamese/DecoderStats.h
 
+/workspaces/siamese/SiameseEncoder.h
+cstdint
+-
+SiameseResult.h
+/workspaces/siamese/SiameseResult.h
+siamese.h
+/workspaces/siamese/siamese.h
+
 /workspaces/siamese/SiameseResult.h
 
 /workspaces/siamese/SiameseSerializers.h
@@ -164,6 +172,10 @@ emmintrin.h
 arm_neon.h
 -
 
+/workspaces/siamese/logger.cpp
+Logger.h
+/workspaces/siamese/Logger.h
+
 /workspaces/siamese/pktalloc.h
 cstddef
 -
@@ -173,6 +185,18 @@ cstdlib
 -
 cstring
 -
+
+/workspaces/siamese/siamese.cpp
+siamese.h
+/workspaces/siamese/siamese.h
+SiameseEncoder.h
+/workspaces/siamese/SiameseEncoder.h
+SiameseDecoder.h
+/workspaces/siamese/SiameseDecoder.h
+gf256.h
+/workspaces/siamese/gf256.h
+Logger.h
+/workspaces/siamese/Logger.h
 
 /workspaces/siamese/siamese.h
 stdint.h

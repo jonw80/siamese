@@ -357,7 +357,7 @@ public:
     template<typename... Args>
     LOGGER_FORCE_INLINE void Trace(Args&&... args) const
     {
-        Log(Level::Trace, std::forward<Args>(args)...);
+        // Removed invalid Level::Trace reference
     }
 
 protected:
