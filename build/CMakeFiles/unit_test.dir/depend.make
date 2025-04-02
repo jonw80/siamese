@@ -20,6 +20,7 @@ CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../GrowingAlignedDataBuffer.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../Logger.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../PacketAllocator.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseCommon.h
+CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseConstants.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseDecoder.cpp
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseDecoder.h
 CMakeFiles/unit_test.dir/SiameseDecoder.cpp.o: ../SiameseSerializers.h

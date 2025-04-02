@@ -5,13 +5,22 @@
 extern "C" {
 #endif
 
-#include <stdint.h>
+#include <stdint.h>  // For standard types like uint64_t
 
-// Forward declarations of packet structures
-struct SiameseOriginalPacket;
-struct SiameseRecoveryPacket;
+// Forward-declared types now fully defined here
+typedef struct SiameseOriginalPacket {
+    uint32_t id;
+    uint8_t* data;
+    unsigned bytes;
+} SiameseOriginalPacket;
 
-// Handle types
+typedef struct SiameseRecoveryPacket {
+    uint32_t id;
+    uint8_t* data;
+    unsigned bytes;
+} SiameseRecoveryPacket;
+
+// Opaque encoder/decoder handles
 typedef void* SiameseEncoder;
 typedef void* SiameseDecoder;
 
@@ -21,23 +30,32 @@ typedef void* SiameseDecoder;
 #define Siamese_Disabled 2
 #define Siamese_DuplicateData 3
 
-// Packet number macros
+// Packet macros
 #define SIAMESE_PACKET_NUM_COUNT (1 << 22)
 #define SIAMESE_PACKET_NUM_INC(x) (((x) + 1) % SIAMESE_PACKET_NUM_COUNT)
+#define SIAMESE_MAX_PACKETS 256
+#define SIAMESE_PACKET_NUM_MAX 65535
 
 // API declarations
-int siamese_encoder_add(SiameseEncoder encoder, const struct SiameseOriginalPacket* packet);
-int siamese_encoder_retransmit(SiameseEncoder encoder, const struct SiameseOriginalPacket* packet);
+int siamese_encoder_add(SiameseEncoder encoder, const SiameseOriginalPacket* packet);
+int siamese_encoder_retransmit(SiameseEncoder encoder, const SiameseOriginalPacket* packet);
 int siamese_encoder_get_statistics(SiameseEncoder encoder, uint64_t* statsOut, unsigned statsCount);
+void siamese_encoder_free(SiameseEncoder encoder);
 
-int siamese_decoder_add_original(SiameseDecoder decoder, const struct SiameseOriginalPacket* packet);
-int siamese_decoder_add_recovery(SiameseDecoder decoder, const struct SiameseRecoveryPacket* packet);
-int siamese_decoder_get(SiameseDecoder decoder, struct SiameseOriginalPacket* packetOut);
-int siamese_decoder_decode(SiameseDecoder decoder, struct SiameseOriginalPacket** packetsOut, unsigned* packetCountOut);
+int siamese_decoder_add_original(SiameseDecoder decoder, const SiameseOriginalPacket* packet);
+int siamese_decoder_add_recovery(SiameseDecoder decoder, const SiameseRecoveryPacket* packet);
+int siamese_decoder_get(SiameseDecoder decoder, SiameseOriginalPacket* packetOut);
+int siamese_decoder_decode(SiameseDecoder decoder, SiameseOriginalPacket** packetsOut, unsigned* packetCountOut);
 int siamese_decoder_get_statistics(SiameseDecoder decoder, uint64_t* statsOut, unsigned statsCount);
+void siamese_decoder_free(SiameseDecoder decoder);
+
+// Optional API to create encoder/decoder instances
+SiameseEncoder siamese_encoder_create();
+SiameseDecoder siamese_decoder_create();
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif // SIAMESE_H
+

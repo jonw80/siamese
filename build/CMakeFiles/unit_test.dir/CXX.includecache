@@ -66,6 +66,8 @@ array
 algorithm
 -
 
+/workspaces/siamese/SiameseConstants.h
+
 /workspaces/siamese/SiameseDecoder.cpp
 SiameseDecoder.h
 /workspaces/siamese/SiameseDecoder.h
