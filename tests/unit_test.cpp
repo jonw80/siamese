@@ -54,6 +54,10 @@ using namespace std;
 #define TEST_BLOCK
 #define TEST_ENABLE_DECODER
 
+// Ensure at least one test macro is defined to include the main function
+#define TEST_STREAMING
+#define TEST_BLOCK
+
 // This experiment uses FEC instead of retransmission to see how it performs
 //#define HARQ_RETRANSMIT_WITH_FEC
 
