@@ -30,6 +30,9 @@
 #include "SiameseDecoder.h"
 #include "SiameseSerializers.h"
 #include "GrowingAlignedDataBuffer.h"
+#include "SiameseDecoder.h"
+#include "siamese.h"  // for SiameseResult
+#include "SiameseConstants.h"  // for the packet limits
 
 
 namespace siamese {

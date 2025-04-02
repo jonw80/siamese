@@ -7,20 +7,13 @@ extern "C" {
 
 #include <stdint.h>
 
+// Forward declarations of packet structures
+struct SiameseOriginalPacket;
+struct SiameseRecoveryPacket;
+
+// Handle types
 typedef void* SiameseEncoder;
 typedef void* SiameseDecoder;
-
-struct SiameseOriginalPacket {
-    uint32_t PacketNum;
-    void* Data;
-    unsigned DataBytes;
-};
-
-struct SiameseRecoveryPacket {
-    uint32_t PacketNum;
-    void* Data;
-    unsigned DataBytes;
-};
 
 // Status codes
 #define Siamese_Success 0
@@ -28,7 +21,7 @@ struct SiameseRecoveryPacket {
 #define Siamese_Disabled 2
 #define Siamese_DuplicateData 3
 
-// Packet macros
+// Packet number macros
 #define SIAMESE_PACKET_NUM_COUNT (1 << 22)
 #define SIAMESE_PACKET_NUM_INC(x) (((x) + 1) % SIAMESE_PACKET_NUM_COUNT)
 
