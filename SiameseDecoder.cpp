@@ -45,7 +45,7 @@ logger::Channel decoderLogger("Decoder", logger::Level::Info);
 #ifdef SIAMESE_DECODER_DUMP_VERBOSE
     static logger::Channel Logger("Decoder", logger::Level::Debug);
 #else
-    static logger::Channel Logger("Decoder", logger::Level::None);
+    static logger::Channel Logger("Decoder", logger::Level::Off); // Updated from None to Off
 #endif
 
 
