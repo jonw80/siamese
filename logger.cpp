@@ -11,12 +11,12 @@ Channel::Channel(const char* name, Level minLevel)
 
 // Update kLevelStrings to match the Level enum
 static const char* kLevelStrings[(int)Level::Count] = {
-    "Debug", "Info", "Warning", "Error", "Off"
+    "Off", "Error", "Warning", "Info", "Debug"
 };
 
 // Update kLevelChars to match the Level enum
 static const char kLevelChars[(int)Level::Count] = {
-    'D', 'I', 'W', 'E', 'O'
+    'O', 'E', 'W', 'I', 'D'
 };
 
 // Ensure the arrays match the Level enum
