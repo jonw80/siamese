@@ -45,16 +45,16 @@ namespace logger {
 
 // Update the level names array
 const char* LevelNames[(int)Level::Count] = {
-    "Trace", "Debug", "Info", "Warning", "Error", "Silent"
+    "Trace", "Debug", "Info", "Warning", "Error", "Silent", "Off"
 };
 
 // Update the level characters array
 const char LevelChars[(int)Level::Count] = {
-    't', 'd', 'I', 'W', '!', '?'
+    't', 'd', 'I', 'W', '!', '?', 'O'
 };
 
 // Ensure static_assert matches the number of levels
-static_assert((int)Level::Count == 6, "Update this switch");
+static_assert((int)Level::Count == 7, "Update this switch");
 
 
 //------------------------------------------------------------------------------
@@ -62,16 +62,30 @@ static_assert((int)Level::Count == 6, "Update this switch");
 
 const char* LevelToString(Level level)
 {
-    static_assert((int)Level::Count == 6, "Update this switch");
-    LOGGER_DEBUG_ASSERT((int)level >= 0 && level < Level::Count);
-    return LevelNames[(int)level];
+    switch (level) {
+        case Level::Trace: return "Trace";
+        case Level::Debug: return "Debug";
+        case Level::Info: return "Info";
+        case Level::Warning: return "Warning";
+        case Level::Error: return "Error";
+        case Level::Silent: return "Silent";
+        case Level::Off: return "Off"; // Added handling for Level::Off
+        default: return "Unknown";
+    }
 }
 
 char LevelToChar(Level level)
 {
-    static_assert((int)Level::Count == 6, "Update this switch");
-    LOGGER_DEBUG_ASSERT((int)level >= 0 && level < Level::Count);
-    return LevelChars[(int)level];
+    switch (level) {
+        case Level::Trace: return 'T';
+        case Level::Debug: return 'D';
+        case Level::Info: return 'I';
+        case Level::Warning: return 'W';
+        case Level::Error: return 'E';
+        case Level::Silent: return 'S';
+        case Level::Off: return 'O'; // Added handling for Level::Off
+        default: return '?';
+    }
 }
 
 
