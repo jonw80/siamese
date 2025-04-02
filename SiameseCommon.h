@@ -45,7 +45,7 @@
 #include "Logger.h"
 
 #include "gf256.h"
-static_assert(PKTALLOC_ALIGN_BYTES == GF256_ALIGN_BYTES, "headers are fighting");
+static_assert(pktalloc::PKTALLOC_ALIGN_BYTES == GF256_ALIGN_BYTES, "headers are fighting");
 
 #include <new>
 #include <vector>

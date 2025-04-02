@@ -30,7 +30,7 @@ bool GrowingAlignedByteMatrix::Initialize(pktalloc::Allocator* allocator, unsign
     AllocatedRows = rows + kExtraRows;
     AllocatedColumns = pktalloc::NextAlignedOffset(columns + kMinExtraColumns);
 
-    Data = allocator->Reallocate(Data, AllocatedRows * AllocatedColumns, pktalloc::Realloc::Uninitialized);
+    Data = allocator->Reallocate(Data, AllocatedRows * AllocatedColumns, pktalloc::ReallocType::Uninitialized);
     return Data != nullptr;
 }
 
