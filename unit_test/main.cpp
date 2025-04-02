@@ -1,6 +1,7 @@
 #include <iostream>
 #include <chrono>
 #include "siamese.h"
+#include <cstring>
 
 int main() {
     SiameseEncoder encoder = siamese_encoder_create();
