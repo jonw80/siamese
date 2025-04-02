@@ -21,3 +21,10 @@ int main() {
     std::cout << "Siamese library test completed successfully." << std::endl;
     return 0;
 }
+
+#include <iostream>
+
+int main() {
+    std::cout << "Unit tests are not yet implemented." << std::endl;
+    return 0;
+}
