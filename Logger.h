@@ -152,7 +152,8 @@ enum class Level {
     Error,     // Log errors only
     Warning,   // Log warnings and errors
     Info,      // Log informational messages, warnings, and errors
-    Debug      // Log all messages
+    Debug,     // Log all messages
+    Count      // Total number of levels
 };
 
 /// Stringize level values
