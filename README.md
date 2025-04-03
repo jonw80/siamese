@@ -1,7 +1,7 @@
 # Siamese Erasure Code
 
 Siamese is a high-speed forward error correction (FEC) library for real-time networked applications. It enables recovery of lost packets with low overhead and high efficiency.
-
+Written By Jonathan J. Wilson JonathanJWilson@physicist.net
 ## 🔥 New in This Version
 
 ### 🚀 5x Speedup Implementation (2025)
