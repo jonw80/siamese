@@ -6,9 +6,16 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace pktalloc {
+// Architecture-specific alignment definition
+#if defined(__AVX__)
+    #define PKTALLOC_ALIGN_BYTES 32
+#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
+    #define PKTALLOC_ALIGN_BYTES 16
+#else
+    #define PKTALLOC_ALIGN_BYTES 8
+#endif
 
-constexpr size_t PKTALLOC_ALIGN_BYTES = 32; // Updated to match GF256_ALIGN_BYTES
+namespace pktalloc {
 
 enum class ReallocType {
     Uninitialized,
@@ -17,7 +24,7 @@ enum class ReallocType {
 
 class Allocator {
 public:
-    uint8_t* Allocate(size_t size) { // Changed return type to uint8_t*
+    uint8_t* Allocate(size_t size) {
         return static_cast<uint8_t*>(std::malloc(size));
     }
 
@@ -25,7 +32,7 @@ public:
         std::free(ptr);
     }
 
-    uint8_t* Reallocate(void* ptr, size_t newSize, ReallocType reallocType) { // Changed return type to uint8_t*
+    uint8_t* Reallocate(void* ptr, size_t newSize, ReallocType reallocType) {
         if (reallocType == ReallocType::ZeroInitialized) {
             void* newPtr = std::calloc(1, newSize);
             if (ptr) {
@@ -39,10 +46,11 @@ public:
 };
 
 inline size_t NextAlignedOffset(size_t size) {
-    const size_t alignment = PKTALLOC_ALIGN_BYTES; // Use defined alignment
+    const size_t alignment = PKTALLOC_ALIGN_BYTES;
     return (size + alignment - 1) & ~(alignment - 1);
 }
 
 } // namespace pktalloc
 
 #endif // PKTALLOC_H
+
