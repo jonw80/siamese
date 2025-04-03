@@ -36,11 +36,17 @@ else()
     # Static library: -fPIC
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
-    # Gprof Profiling
-    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+    # Gprof Profiling (optional)
+    # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
 
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -march=native -fstack-protector")
-    set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
+    # Architecture-specific flags
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "arm64")
+        set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -march=armv8-a -fstack-protector")
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=armv8-a")
+    else()
+        set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -march=native -fstack-protector")
+        set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native")
+    endif()
 endif()
 
 #include_directories(include)

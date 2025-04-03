@@ -6,16 +6,15 @@
 #include <cstdlib>
 #include <cstring>
 
-// Architecture-specific alignment definition
-#if defined(__AVX__)
-    #define PKTALLOC_ALIGN_BYTES 32
-#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
-    #define PKTALLOC_ALIGN_BYTES 16
-#else
-    #define PKTALLOC_ALIGN_BYTES 8
-#endif
-
 namespace pktalloc {
+
+#if defined(__AVX__)
+    constexpr size_t PKTALLOC_ALIGN_BYTES = 32;
+#elif defined(__ARM_NEON) || defined(__ARM_NEON__)
+    constexpr size_t PKTALLOC_ALIGN_BYTES = 16;
+#else
+    constexpr size_t PKTALLOC_ALIGN_BYTES = 8;
+#endif
 
 enum class ReallocType {
     Uninitialized,

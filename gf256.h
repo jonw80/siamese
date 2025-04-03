@@ -53,9 +53,9 @@
 //------------------------------------------------------------------------------
 // Platform/Architecture
 
-#if defined(ANDROID) || defined(IOS) || defined(LINUX_ARM) || defined(__powerpc__) || defined(__s390__)
+#if defined(__aarch64__) || defined(__arm__) || defined(ANDROID) || defined(IOS) || defined(LINUX_ARM) || defined(__powerpc__) || defined(__s390__)
     #define GF256_TARGET_MOBILE
-#endif // ANDROID
+#endif
 
 #if defined(__AVX2__) || (defined (_MSC_VER) && _MSC_VER >= 1900)
     #define GF256_TRY_AVX2 /* 256-bit */
