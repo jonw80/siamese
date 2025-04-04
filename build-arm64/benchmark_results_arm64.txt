@@ -1,0 +1,2 @@
+Encoded 100000 packets in 0.00471726 seconds
+Throughput: 2.11987e+07 packets/sec
