@@ -26,8 +26,7 @@ public:
     bool Acknowledge(const unsigned char* data, unsigned size, unsigned& acknowledgedCount);
 
 private:
-    std::vector<OriginalPacket> originals;
-    unsigned packet_count;
+std::vector<SiameseOriginalPacket> storedPackets;
 };
 
 } // namespace siamese
