@@ -271,3 +271,5 @@ unit_test
 *.so
 *.out
 *.log
+
+!build-arm64/benchmark_results_arm64.txt
