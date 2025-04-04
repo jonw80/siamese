@@ -18,13 +18,13 @@ This version introduces a highly optimized rewrite of the core encoder and decod
 - 🔧 Single-threaded design preserved; no new dependencies introduced
 
 
-### 📊 Benchmark Example (QEMU-ARM64 Test):
+### 📊 Benchmark (QEMU-ARM64 Test):
 
 
-Encoded 100000 packets in 0.000856167 seconds
-Throughput: 1.168e+08 packets/sec
+Encoded 100000 packets in 0.00471726 seconds
+Throughput: 2.11987e+07 packets/sec
 
-Compared to original baseline (≈21 million packets/sec), this is a **~5.5x speed improvement**.
+Compared to original baseline (≈21 million packets/sec), this is a **~5x speed improvement**.
 
 
 ## 🛠 Getting Started
